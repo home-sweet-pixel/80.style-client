@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>
+
+			80.style :: blogging back to the 80s
+
+		</title>
+
+		<script src="js/generics.js">
+
+			/*
+			 *	script generics:
+			 *	global shortcuts, D.O.M functions
+			 */
+
+		</script>
+
+		<script src="js/spectrum.js">
+
+			/*
+			 *	array:
+			 *	main engine
+			 */
+
+		</script>
+
+		<script src="js/array.js">
+
+			/*
+			 *	array:
+			 *	basics
+			 */
+
+		</script>
+
+		<script src="js/tio.js">
+
+			/*
+			 *	TIO screen interface:
+			 *	our main display for text content
+			 */
+
+		</script>
+
+		<script src="js/nav.js">
+
+			/*
+			 *	navigation interface:
+			 *	relevant state and event handlers
+			 */
+
+		</script>
+
+		<script src="js/cui.js">
+
+			/*
+			 *	user interface main:
+			 *	in charge for D.O.M. coordination
+			 */
+
+		</script>
+
+		<script type="text/worker" charset="utf-8" id="m_gen">
+
+			/*
+			 *	The Array:
+			 *	model geometry parser (model generation worker)
+			 */
+
+			const xplicity=1.4;be={lambda:function(_){return{or:function(O){return null===this.v?O:this.v}.bind({v:'function'==typeof _?_:null})}},number:function(_){return{or:function(O){return null===this.v?O:this.v}.bind({v:'number'==typeof _?isNaN(_)?null:_:null})}},object:function(_){return{or:function(O){return null===this.v?O:this.v}.bind({v:_ instanceof Object?Array.isArray(_)?null:_:null})}},regexp:function(_){return{or:function(O){return null===this.v?O:this.v}.bind({v:(_||0).constructor===RegExp?_:null})}},string:function(_){return{or:function(O){return null===this.v?O:this.v}.bind({v:'string'==typeof _?_:null})}},switch:function(_){return{or:function(O){return null===this.v?O:this.v}.bind({v:'boolean'==typeof _?_:null})}},vector:function(_){return{or:function(O){return null===this.v?O:this.v}.bind({v:(_||0).constructor===Array?_:null})}}},Maths={unitize:function(_){const O=1/Math.sqrt(_[0]*_[0]+_[1]*_[1]+_[2]*_[2]);return _[0]*=O,_[1]*=O,_[2]*=O,_},normalTo:function(_,O,C){const S=C[0]-_[0],ee=C[1]-_[1],ie=C[2]-_[2],ae=O[0]-_[0],te=O[1]-_[1],re=O[2]-_[2];return[te*ie-re*ee,re*S-ae*ie,ae*ee-te*S]},inPolygon:function(_,O,C){const S=_&&_.h||0,ee=_&&_.v||0,ie=O&&O.length||0,ae={xy:0,xz:0,zy:2}[C]||0,te={xy:1,xz:2,zy:1}[C]||1;var re,se,ne,oe,le,ce,pe=!1;for(re=0,se=ie-1;re<ie;se=re++)ne=O[re][te],oe=O[se][te],(ne>ee)-(oe>ee)&&(le=O[re][ae],ce=O[se][ae],S<(ce-le)*(ee-ne)/(oe-ne)+le&&(pe=!pe));return pe},polyArea:function(_){let O=0,C=1;for(let S of _)O=O+S.x*_[C].y-S.y*_[C].x,C=(C+1)%_.length;return Math.abs(0.5*O)},polyBuffer:function(_,O=1){const C=function(se,ne,oe){let le=ne.x-se.x,ce=oe.y-ne.y,pe=ne.y-se.y,ue=oe.x-ne.x;return 1e-10>Math.abs(le)&&(le=0),1e-10>Math.abs(ce)&&(ce=0),1e-10>Math.abs(pe)&&(pe=0),1e-10>Math.abs(ue)&&(ue=0),Math.sign(pe*ue-le*ce)},S=function(se,ne,oe,le){let ce=se-oe,pe=ne-le;return Math.sqrt(ce*ce+pe*pe)};let ee=N=0,ie=_.length-1,ae=1;for(let se of _)0<C(_[ie],se,_[ae])?++ee:++N,ie=(ie+1)%_.length,ae=(ae+1)%_.length;let te=Math.sign(ee-N);if(0===te)return!1;let re=[];ie=_.length-1,ae=1;for(let se of _){let ne=S(se.x,se.y,_[ie].x,_[ie].y),oe=S(se.x,se.y,_[ae].x,_[ae].y),le=ne+oe;if(Math.min(ne,oe)<O)return!1;let ce=_[ae].x-_[ie].x,pe=_[ae].y-_[ie].y,ue=_[ie].x+ne*(ce/le),de=_[ie].y+ne*(pe/le);1e-10>Math.abs(ue-se.x)&&1e-10>Math.abs(de-se.y)&&(se={x:se.x+5e-11,y:se.y+5e-11});let me=S(se.x,se.y,ue,de),fe=O/me;C(_[ie],se,_[ae])===te?re.push({x:se.x-fe*(se.x-ue),y:se.y-fe*(se.y-de)}):re.push({x:se.x+fe*(se.x-ue),y:se.y+fe*(se.y-de)}),ie=(ie+1)%_.length,ae=(ae+1)%_.length}return re},to25:function(_,O){const C=_[0],S=_[1],ee=_[2],ie=ee*O.c1-C*O.s1;return{x:C*O.c1+ee*O.s1,y:S*O.c2-ie*O.s2,z:ie*O.c2+S*O.s2}},to3D:function(_,O,C){const S=_.x,ee=_.y,ie=O*C.c2-ee*C.s2;return{y:ee*C.c2+O*C.s2,x:S*C.c1-ie*C.s1,z:ie*C.c1+S*C.s1}},process:function(_,O,C){const S=_.surfaceNormal_0,ee=_.surfaceNormal_1,ie=_.surfaceNormal_2,ae=Math.atan2(S,-ie),te=Math.cos(ae),re=Math.sin(ae),se=Math.atan2(ee,ie*te-S*re),ne={c1:te,c2:Math.cos(se),s1:re,s2:Math.sin(se)},oe=[],le=[];var ce,pe,ue;for(ce in _.path)oe.push({x:(ue=Maths.to25(_.path[ce],ne)).x,y:ue.y,z:ue.z});if(C)return{edge:le,area:Maths.polyArea(oe),except:!1};if(pe=Maths.polyBuffer(oe,O)){ce=pe.length;do le.push(Maths.to3D(pe[--ce],ue.z,ne));while(ce);return{edge:le,area:Maths.polyArea(oe),except:!1}}return{edge:le,area:Maths.polyArea(oe),except:!0}},consec:function(_,O,C){var ee,ie,ae,te,re,se,ne,oe,S=1e-7,le=_,ce=O;return(C&&(ce=[O,C]),!(2>ce.length))&&(ee=ce[ce.length-1],ie=ce[ce.length-2],ae=Math.atan2(ee[0]-ie[0],ee[1]-ie[1]),te=Math.atan2(le[0]-ee[0],le[1]-ee[1]),re=Math.atan2(ee[2]-ie[2],ee[1]-ie[1]),se=Math.atan2(le[2]-ee[2],le[1]-ee[1]),ne=Math.atan2(ee[0]-ie[0],ee[2]-ie[2]),oe=Math.atan2(le[0]-ee[0],le[2]-ee[2]),0>ae&&(ae+=Math.PI),0>te&&(te+=Math.PI),0>re&&(re+=Math.PI),0>se&&(se+=Math.PI),0>ne&&(ne+=Math.PI),0>oe&&(oe+=Math.PI),Math.abs(ae-te)<S&&Math.abs(re-se)<S&&Math.abs(ne-oe)<S)},condense:function(_){const O=_,C=[];for(var S in O)Maths.consec(O[S],C)&&C.pop(),C.push(O[S]);return Maths.consec(C[0],C)&&C.pop(),Maths.consec(C[1],C[C.length-1],C[0])&&C.shift(),C}},World={generator:-1},Model=function(_){return this.mould=this,this.void=[],this.thickness=Math.max(1E-4,be.number(_&&_.thickness).or(.01)),this.threshold=be.number(_&&_.threshold).or(.1),this.flat=be.switch(_&&_.flat).or(!1),this.solid=be.switch(_&&_.solid).or(!1),this.bright=be.switch(_&&_.bright).or(!0),this.shiny=be.switch(_&&_.shiny).or(!1),this.spacing=be.number(_&&_.spacing).or(1),this.noFile=be.switch(_&&_.noFile).or(!1),this.givenRelevants=be.vector(_&&_.relevants).or(null),this.D={},this.objFile=new String,this.vertices=[],this.faces=[],this.groups=[],this.children=[],this.circumRadius=0,this.plicity=1,this.stepping=256,this.surface=0,this.largest=0,this.transId=1,this.xOrigin=0,this.yOrigin=0,this.zOrigin=0,this.relevants=[],this.fRendered=[],this.rUnculled=[],this.nUnculled=0,this.rGroups=[],this.nGroups=0,this.brilliance=1E9,this.spaced=1>this.spacing,this.normalized=!1,this.ceiling=0,this.circumCenter=0,this.excepted=!1,this.parse(_)},Model.prototype.vertex=function(_,O,C){const S=Math.round(1E6*_),ee=Math.round(1E6*O),ie=Math.round(1E6*C),ae=[S,ee,ie].join();return this.D[ae]||this.vertices.push(this.D[ae]=[1E-6*S,1E-6*ee,1E-6*ie,0,0,0,0,0,0,0,1E-6*S,1E-6*ee,1E-6*ie,0,this.vertices.length]),this.D[ae]},Model.prototype.face=function(_){const O=Math.abs,C=_[0],S=_[1],ee=_[2],ie=Maths.unitize(Maths.normalTo(C,S,ee)),ae=.001<O(ie[0])?Math.round(133890048*ie[0]):0,te=.001<O(ie[1])?Math.round(261376*ie[1]):0,re=.001<O(ie[2])?Math.round(510*ie[2]):0,se=-ae||0,ne=-te||0,oe=-re||0,le={path:[C,S],numericPath:[C[14],S[14]],midpoint_0:.1,midpoint_1:.1,midpoint_2:.1,midpoint_3:.1,midpoint_4:.1,midpoint_5:.1,surfaceNormal_0:ie[0],surfaceNormal_1:ie[1],surfaceNormal_2:ie[2],surfaceNormal_3:ie[0],surfaceNormal_4:ie[1],surfaceNormal_5:ie[2],actualRadius:.1,circumRadius:.1,wire:!1,edge:!1,area:0,edges:null,neighbors:this.void,collection:!1,surfaceID_n:133955584&O(ae)|261632&O(te)|511&O(re)|(2147483648&ae)>>>1|(2147483648&te)>>>2|(2147483648&re)>>>3,surfaceID_s:133955584&O(se)|261632&O(ne)|511&O(oe)|(2147483648&se)>>>1|(2147483648&ne)>>>2|(2147483648&oe)>>>3};var ce=C[0]+S[0],pe=C[1]+S[1],ue=C[2]+S[2],de=2,me=1/_.length;do ce+=_[de][0],pe+=_[de][1],ue+=_[de][2],le.path.push(_[de]),le.numericPath.push(_[de][14]);while(++de<_.length);le.midpoint_0=le.midpoint_3=me*ce,le.midpoint_1=le.midpoint_4=me*pe,le.midpoint_2=le.midpoint_5=me*ue,le.actualRadius=le.circumRadius=0,de=0;do ce=_[de][0]-le.midpoint_0,pe=_[de][1]-le.midpoint_1,ue=_[de][2]-le.midpoint_2,me=Math.sqrt(ce*ce+pe*pe+ue*ue),me>le.circumRadius&&(le.actualRadius=le.circumRadius=me);while(++de<_.length);return this.faces.push(le),le},Model.prototype.group=function(_){var _={id:++World.generator,model:!1,relevant:!1,distance:1,faces:_,area:0,actualRadius:_[0].actualRadius,circumRadius:_[0].circumRadius,midpoint_0:_[0].midpoint_0,midpoint_1:_[0].midpoint_1,midpoint_2:_[0].midpoint_2,midpoint_3:_[0].midpoint_3,midpoint_4:_[0].midpoint_4,midpoint_5:_[0].midpoint_5,surfaceNormal_0:_[0].surfaceNormal_0,surfaceNormal_1:_[0].surfaceNormal_1,surfaceNormal_2:_[0].surfaceNormal_2,surfaceNormal_3:_[0].surfaceNormal_3,surfaceNormal_4:_[0].surfaceNormal_4,surfaceNormal_5:_[0].surfaceNormal_5};for(var O in _.faces)_.area+=_.faces[O].area;return this.groups.push(_),_},Model.prototype.end=function(){const _=this.groups,O=this.largest,C=this.threshold;if(this.D=null,this.rGroups=Array(this.groups.length),this.givenRelevants)for(let S in this.relevants=this.givenRelevants,this.relevants)_[S]&&(_[S].relevant=!0);else for(let S in this.relevants=[],this.groups)_[S].area/O>C&&(_[S].relevant=!0,this.relevants.push(parseInt(S)));return this.fRendered=Array(this.groups.length),this.rUnculled=Array(this.relevants.length),this.spaced&&(this.brilliance=9E9*Math.sqrt(this.groups.length)),this.spaced||(this.brilliance=9E9*this.surface/Math.sqrt(this.groups.length)),this.reset({init:!0})},Model.prototype.to_obj=function(_){const O=function(ue){return(ue.toFixed(5).replace(/\.?0+$/,'')||'0').replace(/^(\-?)0\./,'$1.')},C=String.fromCharCode(32),S=be.vector(_&&_.vertices).or(this.vertices),ee=be.vector(_&&_.faces).or(this.faces),ie=S.length,ae=ee.length,te=be.number(_&&_.scaling).or(1);var se,ne,oe,le,ce,pe,re='o spectrum.obj';if(0===ie)return re;se=0;do ne=te*S[se][10],oe=te*S[se][11],le=-te*S[se][12],re=re+'\n'+['v',O(ne),O(oe),O(le)].join(C);while(++se<ie);if(0===ae)return re;se=0;do{ce=ee[se].numericPath.slice(0),pe=0;do++ce[pe];while(++pe<ce.length);re=re+'\nf'+C+ce.join(C)}while(++se<ae);return re},Model.prototype.parse=function(_){const O=be.string(_&&_.from).or('\n'),C=this.thickness,S=this.vertices,ee={},ie=[],ae=String.fromCharCode(32);var re,se,ne,oe,le,ce,pe,ue,de,me,fe,he,_e,ge,Ne,ye,ve,xe,je,Re,ze,te=1,re=O.replace(/\r\n/g,'\n').replace(/\x20{2,}/g,ae).replace(/^\x20|\x20$/,'').split(/\n[go]\s/);se=0;do{if(ne=re[se].split('\n'),0===(le=ne.length))continue;oe=0;do{if(ce=ne[oe].split(/^v\s/),2>ce.length)continue;if(ce=ce[1].split(/\s/),3>ce.length)continue;if(isNaN(ue=parseFloat(ce[0]))||isNaN(de=parseFloat(ce[1]))||isNaN(me=parseFloat(ce[2])))continue;ee[te++]=this.vertex(ue,de,-me)[14]}while(++oe<le);oe=0;outer:do{if(ce=ne[oe].split(/^f\s/),2>ce.length)continue;if(ce=ce[1].split(/\s/),3>ce.length)continue;for(pe in he=[],_e=[],ce){if(isNaN(fe=parseInt(ce[pe].split('/').shift())))continue outer;if('undefined'==typeof(fe=ce[pe]=ee[fe]))continue outer;Maths.consec(fe=S[fe],he)&&(he.pop(),_e.pop()),he.push(fe),_e.push(ce[pe])}for(2<he.length&&Maths.consec(he[0],he)&&(he.pop(),_e.pop()),2<he.length&&Maths.consec(he[1],he[he.length-1],he[0])&&(he.shift(),_e.shift()),je=he.slice(0,1),Re=_e.slice(0,1),pe=1;pe<he.length;++pe)_e[pe]!=Re[pe-1]&&(je.push(he[pe]),Re.push(_e[pe]));if(3>je.length)continue;ie.push({path:je,numericPath:Re})}while(++oe<le)}while(++se<re.length);if(this.noFile||(this.objFile=this.to_obj({faces:ie})),0===ie.length)return this.end();ze=0,se=0;do{if(he=ie[se].path,_e=ie[se].numericPath,ge=this.face(he),this.spaced){for(fe in ge.actualRadius=ge.circumRadius*=this.spacing,ge.wire=!0,ge.area=Maths.process(ge,0,!0).area,this.surface+=ge.area,this.largest=Math.max(ge.area,this.largest),ge.path)ue=this.spacing*(ge.path[fe][0]-ge.midpoint_0)+ge.midpoint_0,de=this.spacing*(ge.path[fe][1]-ge.midpoint_1)+ge.midpoint_1,me=this.spacing*(ge.path[fe][2]-ge.midpoint_2)+ge.midpoint_2,ge.path[fe]=this.vertex(ue,de,me);this.group([ge]);continue}if(ye=Maths.process(ge,C),this.surface+=ge.area=ye.area,this.largest=Math.max(ye.area,this.largest),ye.except)if(this.bright){this.group([ge],ge.wire=!0,++ze);continue}else{this.faces.pop(++ze);continue}for(pe in Ne=[ge],he=[],_e)fe=_e[pe],he.push(S[fe]);for(pe in ye.edge)fe=ye.edge[pe],he.push(this.vertex(fe.x,fe.y,fe.z));Ne.push(ge=this.face(he)),ge.wire=ge.edge=!0,he=[S[_e.shift()],S[_e.pop()],this.vertex((ve=ye.edge.shift()).x,ve.y,ve.z),this.vertex((xe=ye.edge.pop()).x,xe.y,xe.z)],Ne.push(ge=this.face(he)),ge.wire=ge.edge=!0,this.group(Ne)}while(++se<ie.length);return this.end(this.excepted=ze===ie.length)},Model.prototype.normalize=function(){const _=this.faces,O=this.groups,C=this.vertices;var S,ee,ie,ae,te,re,se,ne,oe,le,ce;if(0===C.length)return this;S=0,ee=+Infinity,ie=-Infinity,ae=+Infinity,te=-Infinity,re=0;do C[re][0]<ee&&(ee=C[re][0]),C[re][0]>ie&&(ie=C[re][0]),C[re][2]<ae&&(ae=C[re][2]),C[re][2]>te&&(te=C[re][2]),C[re][1]<S&&(S=C[re][1]);while(++re<C.length);le=.5*(ee+ie),ce=.5*(ae+te),re=0;do C[re][0]-=le,C[re][1]-=S,C[re][2]-=ce;while(++re<C.length);for(re=0;re<O.length;++re)if(se=O[re],!se.model){se.midpoint_0-=le,se.midpoint_1-=S,se.midpoint_2-=ce,ne=0;do oe=se.faces[ne],oe.midpoint_0-=le,oe.midpoint_1-=S,oe.midpoint_2-=ce;while(++ne<se.faces.length)}return this.normalized=!0,this},Model.prototype.pair=function(){const _={},O={},C=this.faces,S=this.faces.length;var ee,ie,ae,te,re,se,ne,oe,le,ce,pe,ue,de,me,fe,he,_e,ge;if(0===S)return this;ee=0;do{if(ie=C[ee],!0===ie.edge)continue;ie.edges={},ie.neighbors=[],ae=ie.numericPath,te=ae.length,ie.edges[1E6*ae[te-1]+ae[0]]=!0,ie.edges[1E6*ae[0]+ae[te-1]]=!0,re=1;do ie.edges[1E6*ae[re-1]+ae[re]]=!0,ie.edges[1E6*ae[re]+ae[re-1]]=!0;while(++re<te);ae=ie.path,te=ae.length,re=0;do{if(se=ae[re][14],'undefined'==typeof(ne=_[se])){_[se]=[ee];continue}O[ee]='undefined'==typeof O[ee]?[].concat(ne):O[ee].concat(ne),ne.push(ee)}while(++re<te)}while(++ee<S);ee=0;do{if('undefined'==typeof(ne=O[ee]))continue;ie=C[ee],te=ne.length,oe={},re=0;do{if(se=ne[re],!0===oe[se]){le=[],ce=[],pe=[se],ue=[ee],de=C[se],ae=ie.numericPath,me=de.numericPath,fe=0;do{_e=ae[fe],he=0;do _e===me[he]&&(le.push(_e),ce.push(_e));while(++he<me.length)}while(++fe<ae.length);if(fe=le[le.length-1],he=le[0],ge=1E6*fe+he,ie.edges[ge]&&de.edges[ge]&&(pe.push(he),pe.push(fe)),2<le.length){fe=he,_e=1;do he=le[_e],ge=1E6*fe+he,ie.edges[ge]&&de.edges[ge]&&(pe.push(fe),pe.push(he)),fe=he;while(++_e<le.length)}if(fe=ce[ce.length-1],he=ce[0],ge=1E6*fe+he,ie.edges[ge]&&de.edges[ge]&&(ue.push(he),ue.push(fe)),2<ce.length){fe=he,_e=1;do he=ce[_e],ge=1E6*fe+he,ie.edges[ge]&&de.edges[ge]&&(ue.push(fe),ue.push(he)),fe=he;while(++_e<ce.length)}1<pe.length&&ie.neighbors.push(pe),1<ue.length&&de.neighbors.push(ue);continue}oe[se]=!0}while(++re<te)}while(++ee<S);ee=0;do ie=C[ee],ie.neighbors=0===ie.neighbors.length?this.void:ie.neighbors;while(++ee<S);return this},Model.prototype.outline=function(){const _=this.faces.slice(0),O=this.groups.slice(0),C=this.thickness,S=function(Oe,qe,Ae,Fe){var Ce,Te,Ge,Be,He,Ve;for(Ce in!1===qe.collection&&(Ae.push(qe),qe.collection=Oe),qe.neighbors)if(Te=qe.neighbors[Ce],Ge=_[Te[0]],Ge.surfaceID_n===qe.surfaceID_n||Ge.surfaceID_n===qe.surfaceID_s||Ge.surfaceID_s===qe.surfaceID_n){for(Be=1;Be<=Te.length-2;Be+=2)He=Te[Be],Ve=Te[Be+1],Fe[1E6*He+Ve]=Fe[1E6*Ve+He]=Ge;!1===Ge.collection&&(Ae.push(Ge),S(Ge.collection=Oe,Ge,Ae,Fe))}},ee=function(Oe,qe){return(Oe||qe.length)-1},ie=function(Oe,qe){return(Oe+=1)%qe.length},ae=function(Oe,qe,Ae){var Fe=qe[Oe][14],Ce=qe[ie(Oe,qe)][14];return Ae[1E6*Fe+Ce]||null},te=function(Oe,qe){var Ae=0;if(0===Oe.length)throw'empty search path';for(;!ae(Ae,Oe,qe);)if(Ae=ee(Ae,Oe),0==Ae)return-1;if(0<Ae)return ie(Ae,Oe);do if(Ae=ie(Ae,Oe),0===Ae)return-1;while(ae(Ae,Oe,qe));return Ae},re=function(Oe,qe,Ae){for(var Fe=ie(Oe,qe);ae(Fe,qe,Ae);)Fe=ie(Fe,qe);return Fe},se=function(Oe,qe,Ae){for(var Fe=ie(Oe,qe);!ae(Fe,qe,Ae);)Fe=ie(Fe,qe);return Fe};var ne,oe,le,ce,pe,ue,de,me,fe,he,_e,ge,Ne,ye,ve,xe,je,Re,ze,ke,Ie,we,De,Pe,Ue;for(ne in this.D={},this.faces=[],this.groups=[],O){switch(oe=O[ne],!0){default:for(ue in le=[],ce=oe.faces)ce[ue].edge||le.push(ce[ue]);if(0===le.length)break;for(ue in ce=!1,le)le[ue].collection&&(ce=!0,le[ue].wire=!1);if(!0===ce)continue;if(S(oe,le[0],ce=[],pe={}),2>ce.length)break;for(ue in he=0,_e=0,ge=0,Ne=0,ce)he+=ce[ue].area,_e+=ce[ue].midpoint_0,ge+=ce[ue].midpoint_1,Ne+=ce[ue].midpoint_2;for(ue in _e/=ce.length,ge/=ce.length,Ne/=ce.length,ye=[],ce)if(ve=ce[ue].path,xe=de=te(ve,pe),-1<de){je=0,Re=!1,ze={};do{ze[de]=1,ke=[],me=se(de,ve,pe);do Ie=_e-ve[xe][0],we=ge-ve[xe][1],De=Ne-ve[xe][2],Ie=Math.sqrt(Ie*Ie+we*we+De*De),Ie>je&&(je=Ie,Re=ke),Ie=_e-ve[de][0],we=ge-ve[de][1],De=Ne-ve[de][2],Ie=Math.sqrt(Ie*Ie+we*we+De*De),Ie>je&&(je=Ie,Re=ke),ke.push(ve[de]),xe=de;while((de=ie(de,ve))-me);ke.push(ve[me])}while(!ze[de=re(me,ve,pe)]);Re&&ye.push(Re)}if(0===ye.length)continue;ze={},ke=ye.shift(),pe=ke.pop(),Pe=ye.length;do for(ue in xe=!1,ye)if(!ze[ue]&&pe[14]===ye[ue][0][14]){ze[ue]=1,ke=ke.concat(ye[ue]),pe=ke.pop(),--Pe,xe=!0;break}while(xe);if(0<Pe&&ke.push(pe),3>(ke=Maths.condense(ke)).length)continue;if(ye=Maths.process(Ue=this.face(ke),C),ye.except)continue;if(1e-5>Math.abs(he-(Ue.area=ye.area)))fe=this.group([Ue]),fe.midpoint_0=_e,fe.midpoint_1=ge,fe.midpoint_2=Ne,Ue.collection=fe,Ue={path:Ue.path.slice(0)};else{for(ue in this.faces.pop(),fe=this.group(le),fe.midpoint_0=_e,fe.midpoint_1=ge,fe.midpoint_2=Ne,le)le[ue].collection=fe;for(ue in ce)this.faces.push(ce[ue]),ce[ue].collection.id-fe.id&&fe.faces.push(ce[ue]),ce[ue].collection=fe,ce[ue].wire=!1,Ie=ce[ue].midpoint_0-_e,we=ce[ue].midpoint_1-ge,De=ce[ue].midpoint_2-Ne,fe.actualRadius=Math.max(fe.actualRadius,Math.sqrt(Ie*Ie+we*we+De*De)+ce[ue].actualRadius)}for(ue in ye.edge)Ue.path.push(this.vertex((pe=ye.edge[ue]).x,pe.y,pe.z));fe.faces.push(ve=this.face(Ue.path)),ve.edge=ve.wire=!0,ke=[ke.shift(),ke.pop(),this.vertex((xe=ye.edge.shift()).x,xe.y,xe.z),this.vertex((le=ye.edge.pop()).x,le.y,le.z)],fe.faces.push(oe=this.face(ke)),oe.edge=oe.wire=!0;continue;}for(ue in this.groups.push(oe),oe.faces)oe.faces[ue].edges=null,oe.faces[ue].neighbors=this.void,this.faces.push(oe.faces[ue])}return this.end()},Model.prototype.listRelevants=function(){const _=this.stepping,O=this.relevants,C=this.fRendered,ee=this.groups.length<<8;for(var ie=0;ie<O.length;++ie)C[O[ie]]=!1;for(ie=_>>1;ie<ee;ie+=this.stepping)C[ie>>>8]=!0;for(ie=0,this.nUnculled=0;ie<O.length;++ie)C[O[ie]]||(this.rUnculled[this.nUnculled++]=O[ie]);return this},Model.prototype.reset=function(_){const O=this.groups,C=this.stepping,S=this.groups.length<<8;var ee,ie,ae,te,re,se,ne,oe;if(_&&_.init)return this.listRelevants();if(this.xOrigin=0,this.yOrigin=0,this.zOrigin=0,this.stepping=Math.max(256,be.number(_&&_.step).or(256)),1===this.transId)return this.stepping===C?this:this.listRelevants();for(this.transId=1,ee=0;ee<this.nUnculled;++ee)if(ie=O[this.rUnculled[ee]],!ie.model){ie.midpoint_0=ie.midpoint_3,ie.midpoint_1=ie.midpoint_4,ie.midpoint_2=ie.midpoint_5,ie.surfaceNormal_0=ie.surfaceNormal_3,ie.surfaceNormal_1=ie.surfaceNormal_4,ie.surfaceNormal_2=ie.surfaceNormal_5,ie.actualRadius=ie.circumRadius,ae=0;do{te=ie.faces[ae],re=te.path,te.midpoint_0=te.midpoint_3,te.midpoint_1=te.midpoint_4,te.midpoint_2=te.midpoint_5,te.surfaceNormal_0=te.surfaceNormal_3,te.surfaceNormal_1=te.surfaceNormal_4,te.surfaceNormal_2=te.surfaceNormal_5,te.actualRadius=te.circumRadius,se=re[0],ne=re[1],se[0]=se[10],se[1]=se[11],se[2]=se[12],se[13]=0,ne[0]=ne[10],ne[1]=ne[11],ne[2]=ne[12],ne[13]=0,oe=2;do se=re[oe],se[0]=se[10],se[1]=se[11],se[2]=se[12],se[13]=0;while(++oe<re.length)}while(++ae<ie.faces.length)}for(ee=C>>1;ee<S;ee+=C)if(ie=O[ee>>8],!ie.model){ie.midpoint_0=ie.midpoint_3,ie.midpoint_1=ie.midpoint_4,ie.midpoint_2=ie.midpoint_5,ie.surfaceNormal_0=ie.surfaceNormal_3,ie.surfaceNormal_1=ie.surfaceNormal_4,ie.surfaceNormal_2=ie.surfaceNormal_5,ie.actualRadius=ie.circumRadius,ae=0;do{te=ie.faces[ae],re=te.path,te.midpoint_0=te.midpoint_3,te.midpoint_1=te.midpoint_4,te.midpoint_2=te.midpoint_5,te.surfaceNormal_0=te.surfaceNormal_3,te.surfaceNormal_1=te.surfaceNormal_4,te.surfaceNormal_2=te.surfaceNormal_5,te.actualRadius=te.circumRadius,se=re[0],ne=re[1],se[0]=se[10],se[1]=se[11],se[2]=se[12],se[13]=0,ne[0]=ne[10],ne[1]=ne[11],ne[2]=ne[12],ne[13]=0,oe=2;do se=re[oe],se[0]=se[10],se[1]=se[11],se[2]=se[12],se[13]=0;while(++oe<re.length)}while(++ae<ie.faces.length)}return this.stepping===C?this:this.listRelevants()},Model.prototype.rotate=function(_){const O=be.number(_&&_.pitch).or(0),C=be.number(_&&_.yaw).or(0),S=be.number(_&&_.roll).or(0),ee=this.groups,ie=this.stepping,ae=this.groups.length<<8,te=this.transId,re=Math.PI/-180,se=Math.sin(re*O),ne=Math.cos(re*O),oe=Math.sin(re*C),le=Math.cos(re*C),ce=Math.sin(re*S),pe=Math.cos(re*S);var ue,de,me,fe,he,_e,ge,Ne,ye,ve,xe;if(0===O&&0===C&&0===S)return this;for(++this.transId,ue=0;ue<this.nUnculled;++ue)if(de=ee[this.rUnculled[ue]],!de.model){ye=de.midpoint_0*pe+de.midpoint_1*ce,ve=de.midpoint_1*pe-de.midpoint_0*ce,xe=de.midpoint_2*ne+ve*se,de.midpoint_1=ve*ne-de.midpoint_2*se,de.midpoint_0=ye*le+xe*oe,de.midpoint_2=xe*le-ye*oe,ye=de.surfaceNormal_0*pe+de.surfaceNormal_1*ce,ve=de.surfaceNormal_1*pe-de.surfaceNormal_0*ce,xe=de.surfaceNormal_2*ne+ve*se,de.surfaceNormal_1=ve*ne-de.surfaceNormal_2*se,de.surfaceNormal_0=ye*le+xe*oe,de.surfaceNormal_2=xe*le-ye*oe,me=0;do{fe=de.faces[me],he=fe.path,ye=fe.midpoint_0*pe+fe.midpoint_1*ce,ve=fe.midpoint_1*pe-fe.midpoint_0*ce,xe=fe.midpoint_2*ne+ve*se,fe.midpoint_1=ve*ne-fe.midpoint_2*se,fe.midpoint_0=ye*le+xe*oe,fe.midpoint_2=xe*le-ye*oe,ye=fe.surfaceNormal_0*pe+fe.surfaceNormal_1*ce,ve=fe.surfaceNormal_1*pe-fe.surfaceNormal_0*ce,xe=fe.surfaceNormal_2*ne+ve*se,fe.surfaceNormal_1=ve*ne-fe.surfaceNormal_2*se,fe.surfaceNormal_0=ye*le+xe*oe,fe.surfaceNormal_2=xe*le-ye*oe,_e=he[0],ge=he[1],_e[13]-te&&(ye=_e[0]*pe+_e[1]*ce,ve=_e[1]*pe-_e[0]*ce,xe=_e[2]*ne+ve*se,_e[1]=ve*ne-_e[2]*se,_e[0]=ye*le+xe*oe,_e[2]=xe*le-ye*oe,_e[13]=te),ge[13]-te&&(ye=ge[0]*pe+ge[1]*ce,ve=ge[1]*pe-ge[0]*ce,xe=ge[2]*ne+ve*se,ge[1]=ve*ne-ge[2]*se,ge[0]=ye*le+xe*oe,ge[2]=xe*le-ye*oe,ge[13]=te),Ne=2;do{if(_e=he[Ne],te===_e[13])continue;ye=_e[0]*pe+_e[1]*ce,ve=_e[1]*pe-_e[0]*ce,xe=_e[2]*ne+ve*se,_e[1]=ve*ne-_e[2]*se,_e[0]=ye*le+xe*oe,_e[2]=xe*le-ye*oe,_e[13]=te}while(++Ne<he.length)}while(++me<de.faces.length)}for(ue=ie>>1;ue<ae;ue+=ie)if(de=ee[ue>>8],!de.model){ye=de.midpoint_0*pe+de.midpoint_1*ce,ve=de.midpoint_1*pe-de.midpoint_0*ce,xe=de.midpoint_2*ne+ve*se,de.midpoint_1=ve*ne-de.midpoint_2*se,de.midpoint_0=ye*le+xe*oe,de.midpoint_2=xe*le-ye*oe,ye=de.surfaceNormal_0*pe+de.surfaceNormal_1*ce,ve=de.surfaceNormal_1*pe-de.surfaceNormal_0*ce,xe=de.surfaceNormal_2*ne+ve*se,de.surfaceNormal_1=ve*ne-de.surfaceNormal_2*se,de.surfaceNormal_0=ye*le+xe*oe,de.surfaceNormal_2=xe*le-ye*oe,me=0;do{fe=de.faces[me],he=fe.path,ye=fe.midpoint_0*pe+fe.midpoint_1*ce,ve=fe.midpoint_1*pe-fe.midpoint_0*ce,xe=fe.midpoint_2*ne+ve*se,fe.midpoint_1=ve*ne-fe.midpoint_2*se,fe.midpoint_0=ye*le+xe*oe,fe.midpoint_2=xe*le-ye*oe,ye=fe.surfaceNormal_0*pe+fe.surfaceNormal_1*ce,ve=fe.surfaceNormal_1*pe-fe.surfaceNormal_0*ce,xe=fe.surfaceNormal_2*ne+ve*se,fe.surfaceNormal_1=ve*ne-fe.surfaceNormal_2*se,fe.surfaceNormal_0=ye*le+xe*oe,fe.surfaceNormal_2=xe*le-ye*oe,_e=he[0],ge=he[1],_e[13]-te&&(ye=_e[0]*pe+_e[1]*ce,ve=_e[1]*pe-_e[0]*ce,xe=_e[2]*ne+ve*se,_e[1]=ve*ne-_e[2]*se,_e[0]=ye*le+xe*oe,_e[2]=xe*le-ye*oe,_e[13]=te),ge[13]-te&&(ye=ge[0]*pe+ge[1]*ce,ve=ge[1]*pe-ge[0]*ce,xe=ge[2]*ne+ve*se,ge[1]=ve*ne-ge[2]*se,ge[0]=ye*le+xe*oe,ge[2]=xe*le-ye*oe,ge[13]=te),Ne=2;do{if(_e=he[Ne],te===_e[13])continue;ye=_e[0]*pe+_e[1]*ce,ve=_e[1]*pe-_e[0]*ce,xe=_e[2]*ne+ve*se,_e[1]=ve*ne-_e[2]*se,_e[0]=ye*le+xe*oe,_e[2]=xe*le-ye*oe,_e[13]=te}while(++Ne<he.length)}while(++me<de.faces.length)}return this},Model.prototype.scale=function(_){const O=be.number(_&&_.uniform).or(be.number(_&&_.x).or(1)),C=be.number(_&&_.uniform).or(be.number(_&&_.y).or(1)),S=be.number(_&&_.uniform).or(be.number(_&&_.z).or(1)),ee=this.groups,ie=this.stepping,ae=this.groups.length<<8,te=this.transId,re=Math.max(O,C,S);var se,ne,oe,le,ce,pe,ue,de,me;if(1===O&&1===C&&1===S)return this;if(++this.transId,O===C&&O===S){for(se=0;se<this.nUnculled;++se)if(ne=ee[this.rUnculled[se]],!ne.model){ne.midpoint_0*=O,ne.midpoint_1*=C,ne.midpoint_2*=S,ne.actualRadius*=re,oe=0;do{le=ne.faces[oe],ce=le.path,pe=ce[0],ue=ce[1],pe[13]-te&&(pe[0]*=O,pe[1]*=C,pe[2]*=S,pe[13]=te),ue[13]-te&&(ue[0]*=O,ue[1]*=C,ue[2]*=S,ue[13]=te),de=2;do{if(pe=ce[de],te===pe[13])continue;pe[0]*=O,pe[1]*=C,pe[2]*=S,pe[13]=te}while(++de<ce.length);le.midpoint_0*=O,le.midpoint_1*=C,le.midpoint_2*=S,le.actualRadius*=re}while(++oe<ne.faces.length)}for(se=ie>>1;se<ae;se+=ie)if(ne=ee[se>>8],!ne.model){ne.midpoint_0*=O,ne.midpoint_1*=C,ne.midpoint_2*=S,ne.actualRadius*=re,oe=0;do{le=ne.faces[oe],ce=le.path,pe=ce[0],ue=ce[1],pe[13]-te&&(pe[0]*=O,pe[1]*=C,pe[2]*=S,pe[13]=te),ue[13]-te&&(ue[0]*=O,ue[1]*=C,ue[2]*=S,ue[13]=te),de=2;do{if(pe=ce[de],te===pe[13])continue;pe[0]*=O,pe[1]*=C,pe[2]*=S,pe[13]=te}while(++de<ce.length);le.midpoint_0*=O,le.midpoint_1*=C,le.midpoint_2*=S,le.actualRadius*=re}while(++oe<ne.faces.length)}return this}for(se=0;se<this.nUnculled;++se)if(ne=ee[this.rUnculled[se]],!ne.model){ne.midpoint_0*=O,ne.midpoint_1*=C,ne.midpoint_2*=S,ne.actualRadius*=re,oe=0;do{le=ne.faces[oe],ce=le.path,pe=ce[0],ue=ce[1],pe[13]-te&&(pe[0]*=O,pe[1]*=C,pe[2]*=S,pe[13]=te),ue[13]-te&&(ue[0]*=O,ue[1]*=C,ue[2]*=S,ue[13]=te),de=2;do{if(pe=ce[de],te===pe[13])continue;pe[0]*=O,pe[1]*=C,pe[2]*=S,pe[13]=te}while(++de<ce.length);le.midpoint_0*=O,le.midpoint_1*=C,le.midpoint_2*=S,me=Maths.unitize(Maths.normalTo(ce[0],ce[1],ce[2])),le.surfaceNormal_0=ne.surfaceNormal_0=me[0],le.surfaceNormal_1=ne.surfaceNormal_1=me[1],le.surfaceNormal_2=ne.surfaceNormal_2=me[2],le.actualRadius*=re}while(++oe<ne.faces.length)}for(se=ie>>1;se<ae;se+=ie)if(ne=ee[se>>8],!ne.model){ne.midpoint_0*=O,ne.midpoint_1*=C,ne.midpoint_2*=S,ne.actualRadius*=re,oe=0;do{le=ne.faces[oe],ce=le.path,pe=ce[0],ue=ce[1],pe[13]-te&&(pe[0]*=O,pe[1]*=C,pe[2]*=S,pe[13]=te),ue[13]-te&&(ue[0]*=O,ue[1]*=C,ue[2]*=S,ue[13]=te),de=2;do{if(pe=ce[de],te===pe[13])continue;pe[0]*=O,pe[1]*=C,pe[2]*=S,pe[13]=te}while(++de<ce.length);le.midpoint_0*=O,le.midpoint_1*=C,le.midpoint_2*=S,me=Maths.unitize(Maths.normalTo(ce[0],ce[1],ce[2])),le.surfaceNormal_0=ne.surfaceNormal_0=me[0],le.surfaceNormal_1=ne.surfaceNormal_1=me[1],le.surfaceNormal_2=ne.surfaceNormal_2=me[2],le.actualRadius*=re}while(++oe<ne.faces.length)}return this},Model.prototype.finalize=function(){const _=this.vertices,O=this.faces,C=this.groups,S=this.vertices.length,ee=this.faces.length,ie=this.groups.length,ae=this.xOrigin,te=this.yOrigin,re=this.zOrigin;var se,ne,oe,ce,pe,ue,de,le=0;if(this.transId=1,this.xOrigin=0,this.yOrigin=0,this.zOrigin=0,this.stepping=256,this.nUnculled=0,0===ie)return this;ce=0;do pe=O[ce],ue=pe.path,pe.midpoint_3=pe.midpoint_0+=ae,pe.midpoint_4=pe.midpoint_1+=te,pe.midpoint_5=pe.midpoint_2+=re,pe.surfaceNormal_3=pe.surfaceNormal_0,pe.surfaceNormal_4=pe.surfaceNormal_1,pe.surfaceNormal_5=pe.surfaceNormal_2,pe.circumRadius=pe.actualRadius;while(++ce<ee);ce=0;do pe=C[ce],le+=pe.actualRadius,pe.midpoint_3=pe.midpoint_0+=ae,pe.midpoint_4=pe.midpoint_1+=te,pe.midpoint_5=pe.midpoint_2+=re,pe.surfaceNormal_3=pe.surfaceNormal_0,pe.surfaceNormal_4=pe.surfaceNormal_1,pe.surfaceNormal_5=pe.surfaceNormal_2,pe.circumRadius=pe.actualRadius;while(++ce<ie);this.circumRadius=0,this.ceiling=0,le/=ie,ce=0;do de=_[ce],se=de[0],ne=de[1],oe=de[2],de[0]=de[10]=se+ae,de[1]=de[11]=ne+te,de[2]=de[12]=oe+re,se=Math.sqrt(se*se+ne*ne+oe*oe),se>this.circumRadius&&(this.circumRadius=se),ne>this.ceiling&&(this.ceiling=ne);while(++ce<S);return this.plicity=le/this.circumRadius,this.circumCenter=this.ceiling/2,(this.plicity=Math.pow(this.plicity,xplicity),this)},MultiModel=function(_){const O=be.number(_&&_.steepness).or(.86),C=be.vector(_&&_.thickener).or([0.1,0.2,0.3,0.4,0.5,0.6,0.7]),S={from:be.string(_&&_.from).or(null),bright:be.switch(_&&_.bright).or(!0),flat:be.switch(_&&_.flat).or(!1),shiny:be.switch(_&&_.shiny).or(!1),solid:be.switch(_&&_.solid).or(!1),spacing:be.number(_&&_.spacing).or(1),thickness:be.number(_&&_.thickness).or(1),threshold:be.number(_&&_.threshold).or(1)};return this.mould=new Model(S),this.mores=Array(this.mould),1===S.spacing&&(S.noFile=!0,S.latest={excepted:!1},0<C.length&&!1===S.latest.excepted&&this.mores.push(S.latest=new Model(S,S.thickness*=1+be.number(C[0]).or(.1))),1<C.length&&!1===S.latest.excepted&&this.mores.push(S.latest=new Model(S,S.thickness*=1+be.number(C[1]).or(.2))),2<C.length&&!1===S.latest.excepted&&this.mores.push(S.latest=new Model(S,S.thickness*=1+be.number(C[2]).or(.3))),3<C.length&&!1===S.latest.excepted&&this.mores.push(S.latest=new Model(S,S.thickness*=1+be.number(C[3]).or(.4))),4<C.length&&!1===S.latest.excepted&&this.mores.push(S.latest=new Model(S,S.thickness*=1+be.number(C[4]).or(.5))),5<C.length&&!1===S.latest.excepted&&this.mores.push(S.latest=new Model(S,S.thickness*=1+be.number(C[5]).or(.6))),6<C.length&&!1===S.latest.excepted&&this.mores.push(S.latest=new Model(S,S.thickness*=1+be.number(C[6]).or(.7))),S.latest.excepted&&this.mores.pop()),(this.steepness=O,this)},MultiModel.prototype.normalize=function(){for(var _ in this.mores)this.mores[_].normalize();return this},MultiModel.prototype.pair=function(){for(var _ in this.mores)this.mores[_].pair();return this},MultiModel.prototype.outline=function(){for(var _ in this.mores)this.mores[_].outline();return this},MultiModel.prototype.scale=function(_){for(var O in this.mores)this.mores[O].scale(_);return this},MultiModel.prototype.rotate=function(_){for(var O in this.mores)this.mores[O].rotate(_);return this},MultiModel.prototype.finalize=function(){for(var _ in this.mores)this.mores[_].finalize();return this},self.onmessage=function(_){let O=_.data.model,C=_.data.instance,S=new MultiModel({from:O,solid:C.solid,flat:C.flat,shiny:C.shiny,spacing:C.spacing,thickness:C.thickness,threshold:C.threshold}).scale({x:C.anis.x,y:C.anis.y,z:C.anis.z}).rotate({pitch:C.lay}).normalize();S.spaced||S.pair(),S.spaced||S.outline(),self.postMessage(S.scale({uniform:200*C.size}).finalize().rotate({yaw:C.orient.yaw})),self.close()};
+
+		</script>
+
+		<link rel="stylesheet" href="cui.css">
+
+	</head>
+
+	<body>
+
+		<div id="hdl">
+
+			<div id="back" class="_"></div>
+
+		</div>
+
+		<div id="hdr">
+
+			<div id="forw" class="_"></div>
+
+		</div>
+
+		<div id="left">
+
+			<div id="help"></div>
+			<div id="find"></div>
+			<div id="fluo"></div>
+			<div id="tsd"></div>
+
+		</div>
+
+		<div id="rite">
+
+			<div id="full"></div>
+			<div id="maxi"></div>
+			<div id="pict"></div>
+			<div id="flip"></div>
+			<div id="mody"></div>
+			<div id="post"></div>
+			<div id="edit"></div>
+			<div id="save"></div>
+			<div id="drop"></div>
+			<div id="link"></div>
+
+		</div>
+
+		<div id="pad">
+
+			<input title="public address" id="page_url" type="text">
+			<div id="link_msg">LINK COPIED, READY TO BE PASTED</div>
+			<div id="pad_mask"></div>
+
+		</div>
+
+		<div id="scn">
+			<div id="cml"></div><!-- TIO MARGINS --><div id="cmr"></div>
+			<!-- SCROLLERLESS WINDOW WIDTH PROBE --><div id="wwp"></div>
+			<!-- TEXT PAGE (EDITOR AREA) ELEMENT --><div id="pag">
+			<!-- SYNTAX-HIGHLITGHTED SOURCE CODE --><div id="txt"></div>
+			<!-- SELECTED TEXT HIGHLIGHT OVERLAY --><div id="ovl"></div>
+			<div id="arc"><canvas id="sc" class="smooth"></canvas></div>
+			<!-- CURSOR BOX (THE BLINKING THING) --><div id="cur"></div>
+			<!-- CURSOR BOX SHADOW (NONBLINKING) --><div id="cus"></div>
+			<!-- EVENTS CATCHER (ABOVE ALL TEXT) --><div id="clc"></div>
+			<!-- TIO OVERLAYS (ABOVE EVERYTHING) --><div id="ovs"></div>
+			<div id="ball">
+				<span id="says"></span>
+				<div id="pointer">&emsp;</div>
+				<div id="pointerIn">&emsp;</div>
+			</div>
+			<div id="cbd">
+			  <textarea title="clips" id="clipboard" spellcheck="false"></textarea>
+			  <div id="closeCtrl" onclick="cui.close(event)">CLOSE</div>
+			  <div id="pasteCtrl" onclick="cui.paste(event)">WRITE</div>
+			  <div id="usageNote">PASTE LINK HERE</div>
+			</div>
+			<div id="qtn">
+			<div id="questions"></div>
+			  <div id="abortCtrl" onclick="cui.abort(event)">ABORT</div>
+			  <div id="eventCtrl" onclick="cui.event(event)">OKAY!</div>
+			</div>
+			<div id="att">
+			<div id="attention"></div>
+			  <div id="rightCtrl" onclick="cui.abort(event)">RIGHT</div>
+			</div>
+			</div>	<!-- pag -->
+		</div>
+
+		<div id="hlp"></div>
+		<div id="bar"></div>
+
+		<div id="osk">
+		<div id="thickness"></div>
+		<div id="spacing"></div>
+		<div id="threshold"></div>
+		<div id="tok"></div>
+			      </div>
+		<div id="ctl"></div>
+		<div id="lfn"></div>
+		<div id="rfn"></div>
+		<div id="ctc"></div>
+
+		<div style="display: none">
+
+		<p id="search_engine_hint">
+
+		80.style stores stuff written by authors, plus other media that might be meaningful to complement written stuff,
+		in distinctive retro-looking themes. We lack lowercase letters, too. And we're PROUD of that! ^^
+
+		<p id="header">
+
+0041 `` SEARCH `+
+{GATE}
+
+
+
+
+
+
+
+
+
+/			LOADING ...
+
+  =============================== ALL THE HIGHLIGHTS `` ==
+
+		<p id="roster">
+
+N `` NEW PAGES+[P]++++++++++++	* STORIES OF BLOGGERS
+N `` NEW IMAGES+[I]+++++++++++	* TIMELINED IMAGEBOARD
+N `` NEW AUTHORS+[A]++++++++++	* AND VIEWERS, WHY NOT?
+N `` NEW PRODUCTS+[R]+++++++++	* FREE DOWNLOADS & STUFF
+N `` EVERLONGTALKS+[E]++++++++	* ANYTHING, TYPED MONTHLY
+N `` THE JABBERWOCK+[J]+++++++	* RANDOM 24/7 CHAT CHANNEL
+
+		<p id="eula">
+
+  =
+ *IMPORTANT: BEFORE SUBMITTING CONTENT IN ANY CIRCUMSTANCE
+  AND FORMS, PLEASE MAKE SURE IT MEETS THE FOLLOWING TERMS
+  =
+
+  THIS SYSTEM HAS A KEEPER, AND A NUMBER OF MODERATORS; WE
+  STRIVE TO MAINTAIN NEUTRALITY ON USER CONTRIBUTIONS, BUT
+  SHALL MODERATE WHAT THESE CONTRIBUTIONS CONVEY:*PERSONAL
+  ATTACKS, HARASSMENT, BULLYING, HATE SPEECH,*MAY GET TEXT
+  AND OTHER MEDIA FORCIBLY REDACTED OR DELETED; SUBMITTING
+  CONTENT THAT VIOLATES LAW WITHIN SUCH CONTENT'S INTENDED
+  JURISDICTION IS ALSO PROHIBITED AND SHALL INCUR DELETION
+  AS SOON AS CORRECTLY REPORTED TO OR OTHERWISE IDENTIFIED
+  BY THIS SYSTEM'S KEEPER OR BY ITS MODERATORS;*FAILURE TO
+  COMPLY WITH THESE TERMS MAY ALSO INCUR THE SUSPENSION OR
+  PERMANENT BAN OF THE OFFENDING ACCOUNT,*AT A MODERATOR'S
+  AND/OR AT THE SYSTEM KEEPER'S UNQUESTIONABLE DISCRETION;
+
+  ACTUALLY, THE OFFICIAL LANGUAGES ACCEPTED IN THIS SYSTEM
+  AS WRITTEN CONTENT ARE TWO:*ENGLISH OR ITALIAN.*IN PART,
+  BECAUSE THE SYSTEM'S TECHNICAL LIMITATIONS MIGHT PREVENT
+  USE OF LANGUAGES FOR WHICH CHARACTERS OUTSIDE THE LEGACY
+  7-BIT ASCII CHARACTER SET WOULD BE ABSOLUTELY ESSENTIAL;
+  IN PART, BECAUSE THE SYSTEM'S KEEPER IS BILINGUAL AND IS
+  REQUIRED (BY THESE TERMS) TO UNDERSTAND WHAT USERS TYPE;
+  THEREFORE, SUBMITTING WRITTEN CONTENT IN LANGUAGES OTHER
+  THAN THE SAID TWO MAY INCUR DELETION, UNLESS ACCOMPANIED
+  BY EXPLICIT OR IMPLICIT PROOF THAT SUCH CONTENT FALLS IN
+  LINE WITH THE FOLLOWING TERMS; TO MAKE THIS POINT CLEAR,
+  THE RESTRICTION APPLIES TO WRITTEN CONTENT IN ANY FORMS,
+  INCLUDING - BUT NOT LIMITED TO - IMAGES AND PHOTOGRAPHS;
+
+  THIS SYSTEM WILL NEVER AUTOMATICALLY COLLECT INFORMATION
+  ABOUT A USER'S IDENTITY, BUT IT WILL COLLECT INFORMATION
+ *ABOUT A USER'S DEVICE,*SUCH THAT MODERATORS MAY PROMPTLY
+  RECOGNIZE RETURNING TROUBLEMAKERS: SIGNING UP OR LOGGING
+  INTO THIS SYSTEM ENTAILS YOUR CONSENT TO SUCH TREATMENT;
+
+ *THIS SYSTEM DOES NOT MAKE USE OF THIRD-PARTY COOKIES,*OR
+  OTHER TRACKING PIECES OF INFORMATION, OTHER THAN WHAT IT
+  NEEDS TO JUST GET A USER'S ACCOUNT TO FUNCTION PROPERLY.
+
+		<p id="sys_welcome_page">
+
+  =
+`header`
+
+N `` JOIN US NOW!		* IT'S JUST FREE, NO CATCH
+N `` HELP CENTRAL		* INTRODUCTION, HELP PAGES
+N `` STUFF TO SEE		* THIS PAGE WANTS YOU, TOO
+
+`roster`
+
+  `eula`
+
+		<p id="sys_welcome_back">
+
+  =
+`header`
+
+N `` FEEDBACK HUB+[N]+++++++++	* FEEDBACK TO YOUR CONTENT
+N `` HELP CENTRAL		* INTRODUCTION, HELP PAGES
+N `` STUFF TO SEE		* THIS PAGE WANTS YOU, TOO
+
+`roster`
+
+N `` TYPE SOMETHING		* WRITE A NEW GENERIC PAGE
+N `` POST A NEW IMAGE		* AND A NEW DEDICATED PAGE
+
+N `` YOUR PROFILE		* HOW YOU WISH TO BE KNOWN
+N `` YOUR TRASH CAN		* AS STORED ON THIS DEVICE
+N `` ACCOUNT SETTINGS		* CHANGE PASSWORD, OPT OUT
+
+  `eula`
+
+		<p id="sys_search_pages">
+
+P `` SEARCH RESULTS LOOKING FOR ` [PAGES] {NOTES} {CHATS}
+  ========================================================
+`cdr`
+
+		<p id="sys_search_notes">
+
+P `` SEARCH RESULTS LOOKING FOR ` {PAGES} [NOTES] {CHATS}
+  ========================================================
+`cdr`
+
+		<p id="sys_search_chats">
+
+P `` SEARCH RESULTS LOOKING FOR ` {PAGES} {NOTES} [CHATS]
+  ========================================================
+`cdr`
+
+		<p id="sys_join_now">
+
+  ENTER YOUR USERNAME AND A PASSWORD (EXISTING OR DESIRED)
+  =
+
+   0132 `` USERNAME `+
+   1232 `` PASSWORD `+
+
+   N `` SIGN UP OR LOG IN	* E-MAIL NOT REQUIRED!
+   L `` CANCEL			* MAYBE LATER, THEN...
+
+  `pwhint`
+
+  =
+  ONCE YOU'RE DONE PICKING A USERNAME AND A PASSWORD, JUST
+  CLICK OR TAP "SIGN UP OR LOG IN": THIS SYSTEM WILL CHECK
+  WHETHER AN UNKNOWN USERNAME IS STILL AVAILABLE, AND WHEN
+  IT IS, OFFER YOU TO REGISTER AN ACCOUNT UNDER THAT NAME.
+
+		<p id="pwhint">
+
+  =
+  USER PASSWORDS MUST BE BETWEEN 12 AND 32 CHARACTERS LONG
+  AND ALL USERNAMES AND PASSWORDS MUST HOLD LETTERS AND/OR
+  DIGITS, WITH THE SOLE EXCEPTION OF MID-WAY BLANK SPACES.
+
+		<p id="sys_create_my_account">
+
+  CREATING ACCOUNT
+
+		<p id="sys_sign_up_or_log_in">
+
+  SIGN UP REQUEST IN PROGRESS
+
+		<p id="sys_username_forbidden">
+
+  ======= SORRY, THIS USERNAME HAS BEEN DISALLOWED =======
+
+  IF YOU FEEL CURIOUS, YOU CAN FOLLOW THE FIRST LINK BELOW
+  TO LEARN SOMETHING ABOUT WHY THIS USERNAME IS DISALLOWED
+
+L `` `username`
+N `` PICK A DIFFERENT USERNAME
+
+		<p id="sys_username_available">
+
+[start test area]
+`bio`
+[close test area]
+
+   N `` CREATE MY ACCOUNT	* ONLY AFTER YOUR OK TO GO
+   L `` CANCEL			* ALRITE, NO HARD FEELINGS
+
+  =
+ *THIS ISN'T OPTIONAL. IT NEEDS NO PERSONAL INFORMATION OR
+  EVEN TRUTHFUL FACTS: BASICALLY, SHOW ME YOU'RE NO ROBOT!
+  =
+  OF COURSE YOU CAN TYPE MORE (IN FACT,/UP TO 38911/BYTES)
+  AND IT DOUBLES UP AS A TRAINING EXERCISE IN TYPING HERE,
+  ESPECIALLY SINCE WE USE NO AUTOMATIC "WORD-WRAP":*WE CAN
+  SHAPE WHAT WE WRITE IN COMPLETE FREEDOM,*BY ADDING BLANK
+  SPACES OR BREAKING LINES WHEREVER WE WANT; AND IT'S VERY
+  REFRESHING, AFTER DECADES SPENT STRIVING TO INDUCE SILLY
+  WORD PROCESSORS, E-MAILS, WEB PAGES, TO PUT STUFF TO THE
+  LEFT OR RIGHT, OR IN THE MIDDLE... NO,*JUST REMEMBER YOU
+  NEED TO HIT THE "ENTER" KEY WHEN YOU RUN OUT OF SPACE*SO
+  YOUR TEXT REMAINS WITHIN VISIBLE MARGINS: IN EXCHANGE OF
+  THAT, YOU EARN SOME OLD-FASHIONED FREEDOM AND SIMPLICITY
+  =
+ *SPEAKING OF FREEDOM, TOO MUCH OF THAT BRINGS SITES DOWN:
+  FOLLOW OUR TERMS OR... YOU'LL HAVE TO SIGN UP AGAIN SOON
+
+		<p id="sys_account_created">
+
+  NEW ACCOUNT CREATED - YOUR CREDENTIALS ARE AS FOLLOWS...
+  =
+
+    USERNAME: `username`
+    PASSWORD: `password`
+
+  `minder`
+
+		<p id="minder">
+
+  =
+  PLEASE TAKE ACTION TO SAFELY STORE THE ABOVE CREDENTIALS
+  OR YOU WILL PERMANENTLY LOSE ACCESS TO THE ACCOUNT! WHEN
+  YOU'RE DONE, HIT THE HOME LINK (80.STYLE) TO CONTINUE...
+
+		<p id="sys_comment_bouncer">
+
+  YOUR ACCOUNT HAS BEEN REGISTERED UNDER THESE CREDENTIALS
+  =
+
+    USERNAME: `username`
+    PASSWORD: `password`
+
+  =
+  PLEASE TAKE ACTION TO SAFELY STORE THE ABOVE CREDENTIALS
+  OR YOU WILL PERMANENTLY LOSE ACCESS TO THE ACCOUNT! WHEN
+  YOU'RE DONE, YOU MAY HIT THE HOME LINK (80.STYLE) ON TOP
+  OR FOLLOW THE LINK BELOW TO RETURN TO THE DISCUSSION YOU
+  HAD BEEN WILLING TO PARTICIPATE:
+
+L `` `return_address`
+
+		<p id="sys_sign_out">
+
+  SIGN OUT REQUEST IN PROGRESS
+
+		<p id="sys_sign_out_confirm">
+
+  SIGN OUT: YOU ARE JUST A GUEST VISITOR, NOW...
+
+N `` WELCOME PAGE
+
+		<p id="sys_feedback_hub">
+
+  ==============  FEEDBACK TO YOUR CONTENT  ==============
+
+		<p id="sys_monthly_views">
+
+  ============	WE ONLY DO MONTHS, NOT YEARS  ============
+
+N `` EVERLONGTALK/JANUARY~NOTE			* WHEN THE DAYS ARE LONG..
+N `` EVERLONGTALK/FEBRUARY~NOTE 			* WHEN IT'S G'DAMN COLD...
+N `` EVERLONGTALK/MARCH~NOTE			* WHEN IT AIN'T SO WRONG..
+N `` EVERLONGTALK/APRIL~NOTE			* WHEN WE MIGHT BE BORN...
+N `` EVERLONGTALK/MAY~NOTE			* WHEN WE COULD BE GONE...
+N `` EVERLONGTALK/JUNE~NOTE			* OUT THERE TO HAVE FUN...
+N `` EVERLONGTALK/JULY~NOTE			* WARMING SCORCHING SUN...
+N `` EVERLONGTALK/AUGUST~NOTE			* MISTY PALE BLUE SKIES...
+N `` EVERLONGTALK/SEPTEMBER~NOTE			* AND REFRESHING NIGHTS...
+N `` EVERLONGTALK/OCTOBER~NOTE			* HERE COME RUNNY NOSES...
+N `` EVERLONGTALK/NOVEMBER~NOTE 			* DON'T YOU BE SO TENDER..
+N `` EVERLONGTALK/DECEMBER~NOTE 			* IN CROSSING MY DECEMBER!
+
+  ============	Y-YEH, THAT WAS KINDA CRINGY  ============
+
+L `` BACK
+
+		<p id="sys_account_settings">
+
+  =================  ACCOUNT MANAGEMENT  =================
+
+N `` CHANGE PASSWORD		* WELP! IT WAS TOO TRIVIAL
+N `` PICK HOME AREAL		* WHEN YOU ENTER THE ARRAY
+N `` DELETE YOURSELF		* ABANDON SHIP? NO PROBLEM
+N `` SIGN OUT			* LOG OUT FROM THIS DEVICE
+
+		<p id="sys_change_password">
+
+  ================= CHANGE YOUR PASSWORD =================
+
+   1232 `` OLD PASSWORD `+
+   1232 `` NEW PASSWORD `+
+
+   N `` CHANGE MY PASSWORD
+   L `` CANCEL
+
+  `pwhint`
+
+		<p id="sys_change_my_password">
+
+  PASSWORD CHANGE REQUEST IN PROGRESS
+
+		<p id="sys_password_changed">
+
+  PASSWORD CHANGED: YOUR NEW CREDENTIALS ARE AS FOLLOWS...
+  =
+
+    USERNAME: `username`
+    PASSWORD: `password`
+
+  `minder`
+
+		<p id="sys_pick_home_areal">
+
+  ===============  PICK YOUR "HOME" AREAL  ===============
+
+0909 `` AREACODE `+
+
+  =
+  ENTER A VALID AREAL CODE ABOVE (THE FORMAT IS XXXX.ZZZZ,
+  IN WHICH BOTH COORDINATES RANGE FROM 1000 TO 8584), THEN
+  USE THE FIRST OPTION BELOW TO CONFIRM: ONCE YOU SET YOUR
+  HOME AREAL, YOU WILL ALWAYS "SPAWN" THERE WHEN YOU CROSS
+  THE ARRAY'S GATE FROM THIS SITE'S FRONT PAGE, SAVING YOU
+  A QUICKTRIP TO YOUR FAVORITE AREAL EACH TIME.
+
+N `` SELECT HOME AREAL		* SO YOU CAN "SPAWN" THERE
+N `` REVERT TO DEFAULT		* DEFAULT AREAL: 4792.4792
+
+L `` CANCEL
+
+		<p id="sys_select_home_areal">
+		<p id="sys_revert_to_default">
+
+  SETTING NEW HOME AREAL
+
+		<p id="sys_homebase_changed">
+
+  NEW HOME AREAL SET. FROM NOW ON, YOU'LL ALWAYS SPAWN AT:
+  =
+
+  AREACODE: `homebase`
+
+N `` ACCOUNT SETTINGS		* BACK TO ACCOUNT SETTINGS
+N `` WELCOME PAGE		* TO GATE INTO "THE ARRAY"
+
+		<p id="howto">
+
+  ==============  HELP FOR AUTHORS: HOW TO  ==============
+
+L `` ORGANIZE_PAGES		* CREATING COLLECTIONS
+L `` ORGANIZE_COLLECTIONS	* MAKING SUPERCOLLECTIONS
+L `` SET_PAGE_OPTIONS		* VISIBILITY & DISCUSSION
+L `` ADVANCED_TIPS_AND_TRICKS	* FINE-TUNE YOUR WRITINGS
+
+		<p id="sys_help_central">
+
+  =====================  QUICK HELP  =====================
+
+L `` WHATuS_80xSTYLEz		* ESSENTIALLY, A BLOG HOST
+L `` WHAT_CAN_I_DO_HEREz	* HOST YOUR OWN BLOG!
+L `` IS_THIS_ALL_FREEz_WHYz	* IT'S NECESSARY
+L `` WHATuS_THAT_MOVING_THINGz	* THE ARRAY
+
+L `` TIP_ME_UP			* THINGS YOU LIKELY MISSED
+L `` ALL_ABOUT_NOTES		* WHAT'S OK, WHAT'S NOT OK
+L `` ALL_KEYBOARD_SHORTCUTS	* MAKE YOUR KEYBOARD COUNT
+
+  ==================  INQUISITIVE HELP	==================
+
+L `` WHATuS_HOSTING_80xSTYLEz	* A MUCH BIGGER HOST
+L `` WHATuS_UNDER_THE_CHROMEz	* A SWEET ENGINE!
+L `` SO_WHO_IS_BEHIND_IT_ALLz	* A PROGRAMMER
+
+  `howto`
+
+		<p id="sys_how_to">
+
+  `howto`
+
+		<p id="sys_about_the_array">
+
+  ===================  MEET THE ARRAY  ===================
+
+L `` WHAT_IS_vTHE_ARRAYvz	* WELL, IT'S LIKE A "GRID"
+L `` WHAT_CAN_I_DO_THEREz	* BUILD A LIL' SHINY WORLD
+
+  ===================  THE ESSENTIALS  ===================
+
+L `` PHYSICS			* LAYOUT, LOOKS, AND FEELS
+L `` ABOUT_AREALS		* LIMITS, RULES & DYNAMICS
+L `` CREATING_OBJECTS		* LABELS AND BASIC OBJECTS
+L `` IMPORTING_NEW_MODELS	* YEAH, THAT'S WHAT'S COOL
+
+  ======  THE ARRAY MODEL CONFIGURATION PANEL (AMC)  =====
+
+L `` WHATuS_THE_AMCz		* A WEIRD KIND OF KEYBOARD
+L `` PARTS_OF_THE_AMC		* SLIDER, TRIMMERS & FLAGS
+L `` OBJECT_PROPERTIES		* SOLID/SORTED/SHINY/OWNED
+
+  =
+
+L `` FINAL_WORDS		* HINTS AND BEST PRACTICES
+
+		<p id="ow_already_signed_in">
+
+  YOU ARE CURRENTLY SIGNED-IN AS `username`
+
+N `` WELCOME PAGE		* SEE FOR YOURSELF
+
+		<p id="ow_username_not_given">
+
+  USERNAME NOT GIVEN
+
+L `` BACK
+
+		<p id="ow_password_too_short">
+
+  PASSWORD MUST BE AT LEAST 12 CHARACTERS LONG
+
+L `` BACK
+
+		<p id="ow_username_too_long">
+
+  USERNAME TOO LONG (MAX 32 CHARACTERS)
+
+L `` BACK
+
+		<p id="ow_password_too_long">
+
+  PASSWORD TOO LONG (MAX 32 CHARACTERS)
+
+L `` BACK
+
+		<p id="ow_invalid_characters">
+
+  USERNAME AND/OR PASSWORD INCLUDE CHARACTERS HELD INVALID
+  =
+
+  SORRY, WHETHER YOU LIKE IT OR NOT, IT'S AN OLD NOSTALGIC
+  SYSTEM: INHABITANTS MAY HAVE TO RESTRICT THEIR BRAINS TO
+  VANILLA ASCII.
+
+  VANILLA ASCII COMPRISES ONLY THE NORMAL FORMS OF LETTERS
+  FROM THE LATIN ALPHABET, DIGITS, AND THE SYMBOLS YOU SEE
+  ON STANDARD U.S. KEYBOARDS. FURTHERMORE 80.STYLE REJECTS
+  LOWERCASE LETTERS, AS WAS THE CASE FOR MANY EARLY MICRO-
+  COMPUTERS AND DUMB TERMINALS AT THE DAWN OF THE COMPUTER
+  AGE. THIS WAY WE DON'T HAVE TO MIND WHEN CAPITAL LETTERS
+  MIGHT OR MIGHT NOT BE ADEQUATE. AIN'T THAT RELAXING?
+
+L `` BACK
+
+		<p id="ow_cover_too_large">
+
+  SELECTED FILE BEYOND MAXIMUM SIZE (1 MB)
+
+L `` BACK
+
+		<p id="ow_photo_too_large">
+
+  SELECTED FILE BEYOND MAXIMUM SIZE (8 MB)
+
+L `` BACK
+
+		<p id="ow_image_too_large">
+
+  SELECTED FILE BEYOND MAXIMUM SIZE (8 MB)
+
+L `` BACK
+
+		<p id="sys_save_profile">
+
+  SAVING USER NOTES
+
+		<p id="sys_save_info_page">
+
+  SAVING INFORMATION PAGE
+
+		<p id="sys_flip_profile_picture">
+
+  TOGGLING PHOTO FRAME
+
+		<p id="sys_drop_profile_picture">
+
+  DROPPING PROFILE PICTURE
+
+		<p id="sys_drop_home_cover_picture">
+
+  DROPPING HOME PAGE COVER
+
+		<p id="sys_apply_headings">
+
+  APPLYING HEADINGS
+
+		<p id="sys_typing_something">
+
+  ACCESSING YOUR HOMESTEAD
+
+		<p id="sys_write_new_page">
+
+  ==================  WRITE A NEW PAGE	==================
+
+0137 `` PAGE TITLE `+
+0037 `` COLLECTION `+`collection`
+
+[start text area]
+++
+[close text area]
+
+P `` VISIBILITY ` {DISALLOW (HIDE)} [PERMIT] {SLIDE SHOW}
+P `` DISCUSSION ` {DISALLOW (HIDE)} [PERMIT]
+
+N `` PUBLISH					{{* CTL-S}}
+N `` DISCARD DRAFT				{{* CTL-Q}}
+
+		<p id="sys_publish">
+
+  PUBLISHING
+
+		<p id="sys_save_changes">
+
+  PUBLISHING CHANGES
+
+		<p id="sys_drop_this_page">
+
+  DROPPING PAGE
+
+		<p id="sys_restore_page">
+
+  RESTORING PAGE
+
+		<p id="sys_flip_page_cover_picture">
+
+  TOGGLING PICTURE FRAME
+
+		<p id="sys_drop_page_cover_picture">
+
+  DROPPING PICTURE
+
+		<p id="sys_drop_package_attachment">
+
+  DROPPING PACKAGE
+
+		<p id="ade">
+
+  =
+  ------------------- ACCOUNT DELETION -------------------
+  =
+
+		<p id="sys_delete_yourself">
+
+  `ade`
+
+  MEH, OF COURSE I WAS SPEAKING OF THE ACCOUNT, NOT REALLY
+  YOURSELF AS A WHOLE. I WAS JUST TRYING TO SCARE YOU FROM
+  TAKING THAT LINK, BUT YOU GOT ME. NOT WHAT?
+
+N `` YOU REALLY WANT TO GO?
+L `` CANCEL
+
+		<p id="sys_you_really_want_to_go_">
+
+  `ade`
+
+  MIND YOU, THAT IF YOU DELETE YOUR ACCOUNT HERE, ALL YOUR
+  STUFF, INCLUDING PICTURES, WILL BE DELETED. I MEAN, IT'S
+  NOT THAT I'D KEEP THEM HERE TAKING UP SPACE WHILE YOU'RE
+  CLEARLY NO LONGER CARING TO KEEP YOURSELF ABLE TO EXPAND
+  ON THAT... I HOPE YOU HAVE EVERYTHING ON FILE, EH?! 'COS
+  IF YOU DON'T, I'M NOT TAKING RESPONSIBILITY FOR MEMORIES
+  BEING LOST. IS THAT CLEAR?!
+
+N `` YES, DELETE EVERYTHING
+L `` CANCEL
+
+		<p id="sys_yes__delete_everything">
+
+  `ade`
+
+  ER... I MEAN, I'M SORRY!
+  IS IT SOMETHING I SAID?
+  IS IT SOMETHING I DID?
+
+N `` NOPE, PERSONAL REASONS
+L `` CANCEL
+
+		<p id="sys_nope__personal_reasons">
+
+  `ade`
+
+  MIND TO PLEASE FILL IN YOUR USERNAME AND PASSWORD AGAIN?
+  YOU'RE ALREADY AUTHENTICATED, APPARENTLY, BUT FOR SUCH A
+  THING, I'D LIKE TO STENGHTEN SECURITY A LITTLE BIT - YOU
+  NEVER KNOW SOMEONE MAY HAVE STOLEN AN OPEN SESSION ID BY
+  WATCHING DATA FLOW ALONG THE LINE, OR BY MEANS OF A LEAK
+  IN SOME BROWSER... BETTER BE SAFE THAN SORRY, YOU SEE...
+
+0132 `` USERNAME `+
+1232 `` PASSWORD `+
+
+N `` DE-LE-TE MY ACCOUNT!		* FOR REAL!
+L `` CANCEL				* LAST CHANCE!
+
+		<p id="sys_de_le_te_my_account_">
+
+  FAREWELL... HOPING THAT'S REALLY YOU!
+
+		<p id="sys_ops_account_deletion">
+
+  INSTANTANEOUS, FORCEFUL ACCOUNT AND ENTIRE BLOG DELETION
+  =
+
+0132 `` USERNAME `+
+
+  =
+N `` DE-LE-TE USER ACCOUNT!		* FOR REAL!
+L `` CANCEL				* LAST CHANCE!
+
+		<p id="sys_de_le_te_user_account_">
+
+  DELETION IN PROGRESS
+
+		<p id="sys_account_erased">
+
+  ACCOUNT WAS SUCCESSFULLY DELETED
+
+N `` WELCOME PAGE
+
+		<p id="sys_ops_console">
+
+  AUTHENTICATING...
+
+		<p id="sys_ops_reports_registry">
+
+  AUTHENTICATING...
+
+		<p id="sys_not_found_404_">
+
+  =
+  ================== *404 - NOT FOUND* ===================
+
+  THERE IS NO SUCH RESOURCE, OR YOU MIGHT HAVE ENCOUNTERED
+  A DELETED AUTHOR PROFILE, A DELETED PAGE, OR A PAGE THAT
+  WAS HIDDEN BY THE PAGE OWNER AND ABOUT WHICH THIS SYSTEM
+ *IS NOW OVERTLY LYING TO YOU!*(MY MOST SINCERE APOLOGIES)
+
+  =
+L `` BACK
+N `` WELCOME PAGE
+
+		<p id="sys_no_response">
+
+  =
+  ================== *000 - NO REPONSE* ==================
+
+       THERE MAY BE A TRANSIENT PROBLEM ON THE WAY BETWEEN
+       YOUR DEVICE AND 80.STYLE'S SERVERS, OR 80.STYLE MAY
+       BE TEMPORARILY UNAVAILABLE FOR MAINTENANCE REASONS.
+       PLEASE GO BACK AND RETRY, NOW AND IN A FEW MINUTES.
+
+		<p id="sys_entry_expunged">
+
+  PAGE WAS SUCCESSFULLY EXPUNGED
+
+L `` BACK
+
+		<p id="sys_trashcanTail">
+
+  =
+  THE TRASH CAN PRESERVES DROPPED PAGES WHICH WERE DELETED
+  FROM THE SERVER PER YOUR REQUEST, BUT IT CANNOT PRESERVE
+  IMAGES OR OTHER NON-TEXTUAL MEDIA POSSIBLY ASSOCIATED TO
+  THOSE PAGES (WHICH IS LIKELY TO EXCEED THE LOCAL STORAGE
+  LIMITATIONS APPLIED BY ALL BROWSERS); TO RESTORE DELETED
+  PAGES, SELECT EACH OF THE PAGES YOU WISH TO RESTORE FROM
+  THE ABOVE LIST, THEN USE THE "RESTORE THIS PAGE" OPTION;
+  AS MENTIONED, IMAGES, PHOTOGRAPHS, AND OTHER NON-TEXTUAL
+  MEDIA WILL NEED TO BE RE-LOADED FROM THE ORIGINAL SOURCE
+
+  =
+  NOTICE: 80.STYLE'S TRASH CAN STORES DELETED PAGES WITHIN
+  YOUR CURRENT DEVICE MEMORY, IN THE FORM OF LOCAL STORAGE
+  ENTRIES, EQUIVALENT TO COOKIES. IF YOU DELETE COOKIES OR
+  SWITCH TO A DIFFERENT DEVICE, SUCH DELETED PAGES WILL NO
+  LONGER BE AVAILABLE (THEIR LOSS WOULD BECOME PERMANENT!)
+
+		<p id="sys_note_basics">
+
+  8<-------------------- /`newpost`/ ---------------------
+`pn`
+  ----------------------------------------------- ``` -->8
+P `` [POST!] {RUB OUT} {LINK...}
+
+`cdr`
+
+		<p id="sys_note_frozen">
+
+  ------------------------- /*/ --------------------------
+  NOTICE: ADDING `nps` TO THIS PAGE IS CURRENTLY FORBIDDEN
+
+`cdr`
+
+		<p id="sys_note_header">
+
+`cdr`
+
+		<p id="sys_note_thread">
+
+`cdr`
+
+		<p id="sys_the_jabberwock">
+
+8<
+`pph`
+  ----------------------------------------------- ``` -->8
+P `` [POST{{ (CTL-S)}}] {RUB OUT} {PASTE A LINK{{ (CTL-V, CTL-V)}}}
+
+		<p id="sys_chat_frozen">
+
+  ------------------------- /*/ --------------------------
+  NOTICE: ABOVE ARE SEARCH RESULTS IN CHATS FROM THE PAST;
+  ONCE POSTED, CHATS ARE IMMUTABLE AND WE CANNOT ADD POSTS
+  TO THEM. {b}TO ADD TO THIS CHAT IN ITS PRESENT STATE,{/b} REACH
+  THE BOTTOM OF ITS CURRENT PAGE, VIA THE FOLLOWING LINK:
+
+N `` FOLLOW CHAT
+
+		<p id="sys_r_quicktrip">
+
+  ====================== QUICKTRIPS ======================
+
+0909 `` AREACODE `+
+
+N `` SET DESTINATION TO GIVEN AREAL	{{* ENTER}}
+N `` QUICKTRIP TO GIVEN AREAL		{{* TAB, TAB, ENTER}}
+
+  =
+N `` QUICKTRIP TO ENTRY AREAL
+
+  =
+  QUICKTRIPS ARE MEANS TO TRAVERSE THE ARRAY, EXCEPT MUCH,
+  MUCH FASTER THAN AT CRUISING SPEED (ENGAGED BY SHIFT-W):
+  IF WE WANTED TO TRAVERSE THE ARRAY DIAGONALLY, THAT WAY,
+  WE'D NEED AS MUCH AS 96 HOURS! THE EQUIVALENT QUICKTRIP,
+  INSTEAD, COMPLETES IN SECONDS.
+
+  =
+  THE {b}AREACODE{/b} IS A NUMERIC ADDRESS IN THE FORM XXXX.ZZZZ,
+  FORMED BY JOINING THE X AND Z COORDINATES YOU SEE IN THE
+  LOWER RIGHT CORNER, ABOVE THE COMPASS.
+
+  =
+  AREALS ARE SQUARE DIVISIONS OF THE ARRAY WHICH SIDES ARE
+ *ONE MILE LONG.*THE COMPASS SHOWS WHICH WAY THEIR X AND Z
+  COORDINATES INCREASE OR DECREASE. *EACH LEGIT COORDINATE
+  IS AN INTEGER NUMBER IN THE RANGE [1000-8584].*THE ARRAY
+  COMPRISES 57,532,225 AREALS, THAT NOBODY OWNS, BUT WHICH
+  CAPACITY IS CAPPED BY A MAXIMUM NUMBER OF VERTICES, THAT
+  DESCRIBE ALL OBJECTS WITHIN AN AREAL.
+
+  =
+  OBJECTS, BE THEM HOUSES OR TRINKETS, MAY OR MAY NOT HAVE
+  AN OWNER, IN WHICH CASE ONLY THE OWNER CAN DESTROY THEM,
+  MAKING IT BASICALLY POSSIBLE TO "OWN" AN AREAL - OR PART
+  OF ITS CAPACITY - BY SIMPLY PARKING OWNED OBJECTS THERE;
+  A SMALL PORTION OF AN AREAL'S CAPACITY WILL BE LEFT FREE
+  TO BE FILLED EXCLUSIVELY BY OBJECTS THAT HAVE NO OWNERS.
+
+  =
+  THE ENTRY AREAL AT 4792.4792 IS THE CENTER OF THE ARRAY,
+  AND CONTAINS SEVERAL OBJECTS WHICH WERE HARD-WIRED THERE
+  IN THE SYSTEM, AND CANNOT MOVE: AN AVENUE, LINED BY ROWS
+  OF TREES ON EACH SIDE; TWO CROSSING ROADS, PERPENDICULAR
+  TO THE AVENUE; THE STATUE OF MARY LOU, AND MARY'S HOUSE.
+
+		<p id="sys_r_make">
+
+  ==================== BASICS FACTORY ====================
+
+`basics`
+
+  ==================== LANDMARK POINT ====================
+
+`marks`
+
+		<p id="ow_quicktrip_in_progress">
+
+  QUICKTRIP IN PROGRESS
+
+		<p id="ow_not_in_array">
+
+  THE LINK YOU FOLLOWED IS AN INNER OPTION OF "THE ARRAY",
+  THE 3-D SIDE OF THIS SITE, BUT YOU ARE NOT IN THE ARRAY:
+  YOU MAY ENTER "THE ARRAY" VIA THE WELCOME PAGE, CLICKING
+  THE WINDOW ON "THE ARRAY" OR PRESSING ALT-A.
+
+N `` WELCOME PAGE
+
+		<p id="ow_out_of_array">
+
+  AREAL OUT OF ARRAY:
+  VALID COORDINATES RANGE FROM 1000 TO 8584 (BOTH X AND Z)
+
+		<p id="ow_model_file_too_large">
+
+  ================= MODEL FILE TOO LARGE =================
+
+  THE ARRAY ACCEPTS MODELS WHICH ORIGINAL .OBJ FILE CANNOT
+  EXCEED 256 KIB (ABOUT A QUARTER MEGABYTE): IN GENERAL, A
+  MODEL THAT FEATURES TOO MUCH GEOMETRY MAY BE TROUBLESOME
+  FOR THE ARRAY'S SOFTWARE RENDERING TO HANDLE... IT'S THE
+  EIGHTIES, MIND YOU. :)
+
+		<p id="ow_model_too_large">
+
+  ======== MODEL TOO LARGE, IN TERMS OF GEOMETRY =========
+
+  THE ARRAY ACCEPTS MODELS THAT WILL FIT INSIDE SPHERES NO
+  LARGER THAN 100 UNITS (METERS, USUALLY) IN DIAMETER; YOU
+  MAY PLEASE NOTE THAT HUGE, MONOLITHIC MODELS WOULD SPAWN
+  IN AND OUT OF VIEW ABRUPTLY, WHICH IS NO NICE SIGHT.
+
+		<p id="sys_server_message">
+
+  `response`
+
+L `` BACK
+
+		<input title="cover file" id="cover-file" type="file" accept=".jpg,.jpeg">
+		<input title="image file" id="image-file" type="file" accept=".jpg,.jpeg">
+		<input title="image file" id="image-post" type="file" accept=".jpg,.jpeg">
+		<input title="model file" id="model-file" type="file" accept=".obj">
+		<input title="my package" id="packg-file" type="file" accept=".zip,.7z">
+		<input title="photo file" id="photo-file" type="file" accept=".jpg,.jpeg">
+
+		</div>
+
+		<div id="arr"></div>
+		<div id="panels">
+		<div id="panel-l"><div id="stuff-l"><span id="speed"></span><span id="per_h"></span></div></div>
+		<div id="cruiser"></div>
+		<div id="panel-r"><div id="stuff-r"><span id="elevn"></span><span id="above"></span></div><span id="areal"></span><span id="works"></span></div>
+		<div id="rainbow"></div></div>
+		<div id="boxs"></div>
+		<div id="cat"></div>
+
+		<div id="photoFrame"></div>
+		<div id="slideFrame"></div>
+
+	</body>
+
+</html>
