@@ -7,7 +7,7 @@ Here the community is free to create forks, open issues, play around with the co
 ## The website at a glance
 
 There is more information on the actual website, of course, but to break down the content of this repo, we have:
-* A 3D game engine written entirely in JavaScript, the **Spectrum Engine**, and a game called **The Array**. 
+* A 3D engine written entirely in JavaScript, the **Spectrum Engine**, and a virtual space called **The Array**. 
 * A user interface for the site's blogging platform.
 * 17 different themes based on the aesthetics of older hardware, like the Commodore 64 or vacuum fluorescent displays.
 
