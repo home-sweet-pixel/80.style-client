@@ -8,7 +8,9 @@
 	 *	==========================================
 	 *
 	 *	Copyright 2020-2024 by Alessandro Ghignola
-	 *	Public domain - but you're on your own. :)
+	 *
+	 *	All rights reserved.
+	 *	Unauthorized redistribution not permitted.
 	 *
 	 */
 
@@ -1046,6 +1048,7 @@
 		t_loadingImage	= be.string ($('t_loading_image') && $('t_loading_image').innerText	).or ('LOADING COVER PICTURE:')
 		t_loadingPhoto	= be.string ($('t_loading_photo') && $('t_loading_photo').innerText	).or ('LOADING PROFILE PICTURE:')
 		t_loadingPack	= be.string ($('t_loading_pack')  && $('t_loading_pack').innerText	).or ('LOADING PACKAGE:')
+		t_loadingSlides = be.string ($('t_loadingSlides') && $('t_loadingSlides').innerText	).or ('LOADING SLIDES:')
 		t_stay_on_tab	= be.string ($('t_stay_on_tab')   && $('t_stay_on_tab').innerText	).or ('PLEASE DO NOT CLOSE THIS TAB.')
 		t_talk		= be.string ($('t_talk')	  && $('t_talk').innerText		).or ('NAN')
 		t_linksomething = be.string ($('t_linksomething') && $('t_linksomething').innerText	).or ('SHARE A LINK...')
@@ -1343,6 +1346,8 @@
 			'sys/pubblica'					: 'sys/publish',
 			'sys/cancella/bozza'				: 'sys/discard/draft',
 			'sys/carica/un_immagine___'			: 'sys/post/a/new/image',
+			'sys/allestisci/una/galleria'			: 'sys/create/a/slideshow',
+			'sys/carica/immagini'				: 'sys/load/images',
 			'sys/esci'					: 'sys/sign/out',
 			'sys/crea/il/mio/account'			: 'sys/create/my/account',
 			'sys/pagina/iniziale'				: 'sys/welcome/page',
@@ -4834,6 +4839,7 @@
 		$('model-file').onchange = nav.loadModel
 		$('packg-file').onchange = nav.loadPackg
 		$('photo-file').onchange = nav.loadPhoto
+		$('slide-show').onchange = nav.slideShow
 
 		/*
 		 *	restore chosen style from

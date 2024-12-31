@@ -8,7 +8,9 @@
 	 *	===========================================
 	 *
 	 *	Copyright 2020-2024 by Alessandro Ghignola
-	 *	Public domain - but you're on your own. :)
+	 *
+	 *	All rights reserved.
+	 *	Unauthorized redistribution not permitted.
 	 *
 	 */
 
@@ -7277,6 +7279,141 @@
 
 		}, // package loader
 
+		slideShow: function (e) {
+
+		    let count = this.files.length
+		    let files = this.files
+		    let names = new Array
+
+			for (let file of files)
+
+				names.push (file.name.toUpperCase ())
+				names.sort (function (a, b) { return (a > b ? +1 : -1) })
+
+		    let event = e
+		    let limit = 8388608
+		    let e_big = String ('ow/image/too/large')
+		    let mLoad = t_loadingSlides
+		    let u_r_i = String ('/exec/createSlide')
+		    let t_pag = names.shift ().replace (/\.(JPG|JPEG)$/, empty)
+		    let t_grp = nav.grab (t_collection)
+		    let o_vis = nav.pick (t_visibility)
+		    let o_dis = nav.pick (t_discussion)
+		    let load2 = nav.to.bind ({ destination: rc (tf (nav.username ()) + slash + tf (t_grp) + slash + tf (t_pag)) + '~full' })
+		    let whoa2 = String ('sys/slideshow/upload/error')
+
+			event.preventDefault ()
+
+			for (let image of files) {
+
+				if (image.size > limit)
+
+					return (nav.to (null, e_big))
+
+			} // early rejection test on all file sizes
+
+		  const load1 = function (image) {
+
+			    let r = new FileReader ()
+
+				r.onload = function (e) {
+
+					tio.type ({
+
+						text: nline + block + this.image.name + nline + block,
+
+						cps: 30,
+						lim: 0,
+
+						oncompletion: function () {
+
+							new Requester ({ notes: { meter: 0, files: this.that.files } }).post ({
+
+								uri: u_r_i,
+
+								pairs: [
+
+									{ name: 'target_g', value: t_grp },
+									{ name: 'target_p', value: this.image.name.toUpperCase ().replace (/\.(JPG|JPEG)$/, empty) },
+									{ name: 'top_page', value: t_pag },
+									{ name: 'manifest', value: o_vis },
+									{ name: 'comments', value: o_dis },
+									{ name: 'username', value: nav.username () },
+									{ name: 'identity', value: nav.identity () },
+									{ name: 'data_url', value: this.event.target.result }
+
+								],
+
+								onprog: function (e) {
+
+								    let dots = ~~ (56 * e.loaded / e.total)
+
+									tio.putKey.call ({
+
+										key: Array (1 + dots - this.notes.meter).join ('.'),
+
+										typed: true,
+										hence: this.notes.meter = dots
+
+									})
+
+								},
+
+								onload: function (r) {
+
+									tio.type ({
+
+										text: Array (57 - r.notes.meter).join ('.'), cps: 30, lim: 0,
+										oncompletion: function () { -- count >= 0 ? load1 (r.notes.files [count]) : load2 (r) }
+
+									})
+
+								},
+
+								onwhoa: function (r) {
+
+									tio.type ({
+
+										text: Array (57 - r.notes.meter).join ('X'), cps: 30, lim: 0,
+										oncompletion: function () { nav.to (null, 'sys/server/message', { path: whoa2, response: this.response }) }.bind (r)
+
+									})
+
+								}
+
+							})
+
+						}.bind ({ that: this.that, image: this.image, event: e })
+
+					}) // display name
+
+				}.bind ({ that: this.that, image: image }) // r.onload
+
+				r.readAsDataURL (image)
+
+			}.bind ({ that: this }) // load1 (stage)
+
+			tio.ot = avoid	// clear TIO overlays on next live menu bar update
+			nav.pu = empty	// prevent scstHistory record
+
+			nav.array.hide ()
+			tio.onpgfocus (e)
+			tio.disconnectKeyboard ()
+			tio.cls (null, nav.cb).cls (cui.mbUpdate ({ live: true, menu: nav.db }), nav.cb).scrollTo (0, true)
+
+			tio.type ({
+
+				text: [,mLoad,t_stay_on_tab,,].join (nline + block),
+
+				cps: 60,
+				lim: 0,
+
+				oncompletion: function () { load1 (files [-- count]) }
+
+			}) // TIO setup
+
+		}, // slide show loader
+
 		/*
 		 *	navigation dynamics:
 		 *	all of what follows is somehow entangled with the workings of "nav.to"
@@ -7486,7 +7623,8 @@
 			'sys/r/make':			true,
 			'sys/r/quicktrip':		true,
 			'sys/username/available':	true,
-			'sys/write/new/page':		true
+			'sys/write/new/page':		true,
+			'sys/create/a/slideshow':	true
 
 		}, // pages that need text input, and hence, start with the OSK on
 
@@ -7531,7 +7669,8 @@
 			'sys/sign/up/or/log/in':	'0/99/99',
 			'sys/typing/something': 	'0/99/99',
 			'sys/username/available':	'0/0/4',
-			'sys/write/new/page':		'0/99/5'
+			'sys/write/new/page':		'0/99/5',
+			'sys/create/a/slideshow':	'0/99/5'
 
 		}, // intrinsic vertical scroll offset and cursor position on load
 
@@ -9927,6 +10066,10 @@
 				case 'sys/post/a/new/image':
 
 					return $('image-post').click (), false
+
+				case 'sys/load/images':
+
+					return $('slide-show').click (), false
 
 				case 'sys/undo/changes':
 
@@ -12511,7 +12654,7 @@
 						pp: nav.ps.pp,		// inherits passport flag set at "sys/username/available"
 						ve: nav.ps.ve		// inherits void entries roster so far
 
-					}, null, pushback) */		// can't - says security (unless we're online, not in a local js file)
+					}, null, pushback) */		// insecure (valid online)
 
 					for (let voidedID in nav.ps.ve)
 
@@ -13421,17 +13564,13 @@
 
 								if (be.string (response.full).or (null)) {
 
-									switch (paginate.modal) {
+									switch (location.hash.startsWith ('#/about/')) {
 
-										case 'full':
-
-											if (location.hash.startsWith ('#/about/'))
-
-												break	// ...or if it's a profile picture
+										case false:
 
 											nav.SS || (nav.ru = pairs.ref || rc (nav.thisPage ()))	// if no slideshow, record this as entry/referring page
 
-									} // avoid remembering it as entry page, if this page is "fune"...
+									} // avoid remembering it as the entry page, if it's a profile picture
 
 									nav.pp && (nav.pp = nav.pp + '~full')					// set previous page link's modality to fullscreen view
 									nav.np && (nav.np = nav.np + '~full')					// set the next page link's modality to fullscreen view
