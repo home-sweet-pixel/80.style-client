@@ -8,9 +8,7 @@
 	 *	==========================================
 	 *
 	 *	Copyright 2020-2024 by Alessandro Ghignola
-	 *
-	 *	All rights reserved.
-	 *	Unauthorized redistribution not permitted.
+	 *	Public domain - but you're on your own. :)
 	 *
 	 */
 
