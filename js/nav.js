@@ -7246,7 +7246,7 @@
 			nav.loadSomething.call (this, {
 
 				event: e,
-				limit: 30000000,
+				limit: 250000000,
 				e_big: String ('ow/package/too/large'),
 				mLoad: t_loadingPack,
 				u_r_i: String ('/exec/writePack'),
