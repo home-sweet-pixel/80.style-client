@@ -7,7 +7,7 @@
 	 *	80.style user interface navigation dynamics
 	 *	===========================================
 	 *
-	 *	Copyright 2020-2024 by Alessandro Ghignola
+	 *	Copyright 2020-2025 by Alessandro Ghignola
 	 *	Public domain - but you're on your own. :)
 	 *
 	 */
@@ -377,7 +377,7 @@
 
 		st: {
 
-			edszMatchNumber: 0,									//
+			edszMatchNumber: 0,				// edit size match number, see CUI	//
 														//
 			pp_status: {										//
 														//
@@ -498,7 +498,7 @@
 				active:    false,			// model configuration active		//
 				enable:    false			// model configuration enable		//
 														//
-			}						// array models configuration		//
+			}						// array models configuration		// -----------------
 
 		}, // nav.st
 
@@ -599,8 +599,10 @@
 		il: avoid,		// user ignorelist (array)
 		ii: clear,		// user ignorelist (index)
 		io: false,		// user is a sysop		// disables the ignorelist
+
 		ip: false,		// flag marking image presence
 		kp: false,		// flag marking pkage presence
+		tp: false,		// transfer progress (uploads)	// enables "progress dots"
 
 		fp: false,		// flag: watching "front page"
 		jw: false,		// flag: watching paged "chat"
@@ -6074,6 +6076,8 @@
 
 					oncompletion: function () {
 
+						nav.tp = true
+
 						new Requester ({ notes: { meter: 0 } }).post ({
 
 							uri: u_r_i,
@@ -6091,7 +6095,7 @@
 
 							    let dots = ~~ (56 * e.loaded / e.total)
 
-								tio.putKey.call ({
+								nav.tp && tio.putKey.call ({
 
 									key: Array (1 + dots - this.notes.meter).join ('.'),
 
@@ -6104,23 +6108,27 @@
 
 							onload: function (r) {
 
-								tio.type ({
+								nav.tp && tio.type ({
 
 									text: Array (57 - r.notes.meter).join ('.'), cps: 30, lim: 0,
 									oncompletion: load2 (r)
 
 								})
 
+								nav.tp || load2 (r)
+
 							},
 
 							onwhoa: function (r) {
 
-								tio.type ({
+								nav.tp && tio.type ({
 
 									text: Array (57 - r.notes.meter).join ('X'), cps: 30, lim: 0,
 									oncompletion: function () { nav.to (null, 'sys/server/message', { path: whoa2, response: nav.de_hint (this.response) }) }.bind (r)
 
 								})
+
+								nav.tp || nav.to (null, 'sys/server/message', { path: whoa2, response: nav.de_hint (r) })
 
 							}
 
@@ -6152,9 +6160,9 @@
 				load2: function (r) {
 
 					sessionStorage [r.response] = '?utime=' + Date.now ()
-					nav.to (null, null, { interstitial: true })
+					nav.to (null, this.landing, { interstitial: true })
 
-				}
+				}.bind ({ landing: rc (nav.thisPage ()) })
 
 			})
 
@@ -6182,9 +6190,9 @@
 
 						'?utime=' + Date.now ()
 
-					nav.to (null, null, { interstitial: true })
+					nav.to (null, this.landing, { interstitial: true })
 
-				}
+				}.bind ({ landing: rc (nav.thisPage ()) })
 
 			})
 
@@ -7201,9 +7209,9 @@
 
 						'?utime=' + Date.now ()
 
-					nav.to (null, null, { interstitial: true })
+					nav.to (null, this.landing, { interstitial: true })
 
-				}
+				}.bind ({ landing: rc (nav.thisPage ()) })
 
 			})
 
@@ -7233,7 +7241,7 @@
 
 						'?utime=' + Date.now ()
 
-					nav.to (false, r.response.substr ('image/'.length).replace (/\/[dhs]\-/, slash) + '~post', { easyRetype: true })
+					nav.to (null, r.response.substr ('image/'.length).replace (/\/[dhs]\-/, slash) + '~post', { easyRetype: true })
 
 				}
 
@@ -7262,16 +7270,16 @@
 
 						n.pop ()		// removes extension, if present
 
-					nav.to (null, location.hash.substr (2).split (tilde).shift () + '~edit', {
+					nav.to (null, this.landing, {
 
 						instant: true,		// don't animate this transition
-						interstitial: true,	// do not record node in history
+						interstitial: nav.tp,	// don't record node in history (unless we had left target page)
 
 						filename: n.join (point).toUpperCase ().replace (/[^\x20\-\.\w]/g, score).substr (0, 20)
 
 					})
 
-				}.bind ({ file: this.files [0] })
+				}.bind ({ file: this.files [0], landing: rc (nav.thisPage ()) + '~edit' })
 
 			})
 
@@ -11050,6 +11058,7 @@
 				nav.fp = false
 				nav.ip = false
 				nav.kp = false
+				nav.tp = false		// silence upload "progress dots"
 				nav.jw = false
 				nav.nf = false
 				nav.rf = false
