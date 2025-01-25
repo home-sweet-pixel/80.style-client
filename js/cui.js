@@ -1145,7 +1145,7 @@
 		t_pass_severe	= be.string ($('t_pass_severe')   && $('t_pass_severe').innerText	).or ('Please enter the password for the account to severe, here.')
 		t_severe_conf	= be.string ($('t_severe_conf')   && $('t_severe_conf').innerText	).or ('Account severed - its feedback will no longer be shared.')
 		t_conf_announce = be.string ($('t_conf_announce') && $('t_conf_announce').innerText	).or ('Announce this page on the showcase?')
-		t_announce_conf = be.string ($('t_announce_conf') && $('t_announce_conf').innerText	).or ('Accouncement confirmed. Thank you for your contribution.')
+		t_announce_conf = be.string ($('t_announce_conf') && $('t_announce_conf').innerText	).or ('Announcement confirmed. Thank you for your contribution.')
 		t_deannounce	= be.string ($('t_deannounce')	  && $('t_deannounce').innerText	).or ('Remove this announcement, deemed inappropriate?')
 		t_conf_report	= be.string ($('t_conf_report')   && $('t_conf_report').innerText	).or ('Report illicit content to system operators?')
 		t_report_conf	= be.string ($('t_report_conf')   && $('t_report_conf').innerText	).or ('Operators will check as soon as possible.')
