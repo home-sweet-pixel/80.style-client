@@ -102,7 +102,7 @@
 
 		shush: function (args) {
 
-			cui.ball.link = null
+			cui.ball.point = null
 			cui.ball.comic.onclick = null
 			cui.ball.comic.style.opacity = 0
 			cui.ball.comic.style.cursor = 'default'
