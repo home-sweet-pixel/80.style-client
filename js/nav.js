@@ -4372,10 +4372,9 @@
 
 				18: new Date ().getTimezoneOffset () - ((function () {
 
-				    let aux = new Date ()
-				    let jan = new Date (aux.getFullYear (), 0, 1)
-				    let aug = new Date (aux.getFullYear (), 7, 1)
-				    let dst = aug.getTimezoneOffset () - jan.getTimezoneOffset ()
+				    let cur = new Date ()
+				    let ref = new Date (cur.getFullYear (), 0, 1)
+				    let dst = cur.getTimezoneOffset () - ref.getTimezoneOffset ()
 
 					return (dst)
 
