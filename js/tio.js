@@ -1496,7 +1496,7 @@
 			if (f.pick) {
 
 				tio.ca && tio.complete ();
-				tio.onpickrun ({ label: be.vector (f.line.match (/\[(.+)\]/)).or (empty).pop () });
+				tio.onpickrun ({ keyboard: true, label: be.vector (f.line.match (/\[(.+)\]/)).or ([ empty ]).pop () });
 				return tio;
 
 			} // if we're on an executable PICK, run the highlighted option
@@ -2208,7 +2208,7 @@
 		},
 
 		/*
-		 *
+		 *	flag, rmemebering whether we control the keyboard
 		 */
 
 		keyboardHooked: false,
@@ -2357,16 +2357,32 @@
 			findNext:	function () { tio.findString.call ({ prompt: false }) },
 			findAndReplace: function () { tio.findReplace () },
 
-			// functions for read-only mode (form-like input)
+			// functions in read-only mode (form-like input)
 
 			ro_ctrlHome: function () {
 
-				tio.pm || (tio.writable () || tio.onhomings ())
-				tio.pm || (tio.writable () && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.findVCi (tio.bi, tio.l1))))
+				if (tio.pm)
+
+					return;
+
+				if (tio.writable ()) {
+
+				    let home_ci = tio.findVCi (tio.bi, tio.l1);
+
+					if (home_ci - tio.ci) {
+
+						tio.positionCursor (tio.cp = tio.findCp (tio.ci = home_ci));
+						return;
+
+					} // UNLESS we're already there (proceeds below)
+
+				} // if in writable text clip, home to beginning of text
+
+				tio.onhomings ();
 
 			},
 
-			ro_ctrlEnd:	function () { tio.pm || (tio.writable () && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.findVCi (0xFFFFFF, tio.l2)))) },
+			ro_ctrlEnd:	function () { tio.pm || (tio.l1 < 0xFFFFFF && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.findVCi (0xFFFFFF, tio.l2)))) },
 			ro_shiftEnd:	function () { tio.writable ({ or: tio.lineField ().data }) && tio.kbFunctions.shiftEnd.call () },
 			ro_shiftRight:	function () { tio.writable ({ or: tio.lineField ().data }) && tio.kbFunctions.shiftRight.call () },
 
@@ -2605,6 +2621,10 @@
 
 					return tio.kbFunctions.ctrlPageUp.call ();
 
+				if (tio.ci === tio.findVCi (tio.bi, tio.l1))
+
+					return tio.kbFunctions.ctrlPageUp.call ();
+
 				tio.cp.j = Math.max (tio.l1, tio.cp.j - ~~ ((window.innerHeight - tio.vp ()) / tio.ch));
 				tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.findVCi (tio.cp.c, tio.cp.j)));
 
@@ -2613,6 +2633,10 @@
 			ro_pageDown: function () {
 
 				if (tio.writable () === false || tio.pm === true)
+
+					return tio.kbFunctions.ctrlPageDown.call ();
+
+				if (tio.ci === tio.findVCi (tio.bi, tio.l1))
 
 					return tio.kbFunctions.ctrlPageDown.call ();
 

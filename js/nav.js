@@ -5093,7 +5093,7 @@
 
 				h.push (l)
 				tio.update (h.concat (f).join (nline))
-				tio.setCursorState ({ state: 'hide' })
+				e.keyboard && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: tio.ci })))
 				nav.removeMarker (id)
 				nav.locateMarkers ()
 
@@ -11483,7 +11483,16 @@
 
 						] [new Date ().getUTCMonth ()] + '~note'
 
-					kind = (blank)
+					/*
+					 *	force such nodes to behave as arbitrary pages,
+					 *	since they won't need a paragraph to configure
+					 *	their layout; and, disable lowercase inference
+					 *	in the postprocessor, so we can type lowercase
+					 *	stuff here in any cases
+					 */
+
+					kind = blank
+					nav.st.pp_status.count = 0
 
 					break
 
@@ -11554,6 +11563,10 @@
 							// configure initial entry line: either something pending, or instructions
 
 							pairs.pph = postpend ? localStorage.note : t_add_phrase
+
+							// disable lowercase inference - chats are supposed to be mostly uppercase
+
+							nav.st.pp_status.count = 0
 
 					}
 

@@ -1187,7 +1187,7 @@
 		t_jabberwock	= be.string ($('t_jabberwock')	  && $('t_jabberwock').innerText	).or ('THE JABBERWOCK')
 		t_past_page	= be.string ($('t_past_page')	  && $('t_past_page').innerText 	).or ('PRIOR WOCKS')
 		t_go_to_chat	= be.string ($('t_go_to_chat')	  && $('t_go_to_chat').innerText	).or ('FOLLOW CHAT')
-		t_add_phrase	= be.string ($('t_add_phrase')	  && $('t_add_phrase').innerText	).or ('{tt}TYPE MESSAGE HERE: REMEMBER TO BREAK ALL LINES HERE ->{/tt} |')
+		t_add_phrase	= be.string ($('t_add_phrase')	  && $('t_add_phrase').innerText	).or ('type message here: remember to break all lines here -> |')
 		t_search	= be.string ($('t_search')	  && $('t_search').innerText		).or ('SEARCH')
 		t_invalid_query = be.string ($('t_invalid_query') && $('t_invalid_query').innerText	).or ('Mary said our query was invalid... fascinating!')
 		t_not_found	= be.string ($('t_not_found')	  && $('t_not_found').innerText 	).or ('Sorry, nothing was found. :(')
@@ -2550,9 +2550,9 @@
 
 							if ((a > 64 && a < 90) || (a > 47 && a < 58)) {
 
-								my.lower && (c = '</tt>' + c)
-								my.lower && (my.lower = false)
-								my.entag || (my.total = my.total + my.count)
+								my.ntity || (my.lower && (c = '</tt>' + c))
+								my.ntity || (my.lower && (my.lower = false))
+								my.ntity || (my.entag || (my.total = my.total + my.count))
 
 							} // found: uppercase or digit (which breaks lowercase)
 
