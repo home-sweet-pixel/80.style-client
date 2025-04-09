@@ -818,8 +818,8 @@
 
 	}
 
-	div#back, div#back.a { background-image: url(2d/png/arrow-back.png) }
-	div#forw, div#forw.a { background-image: url(2d/png/arrow-forw.png) }
+	div#back, div#back.a { background-image: url(/2d/png/arrow-back.png) }
+	div#forw, div#forw.a { background-image: url(/2d/png/arrow-forw.png) }
 		  div#back.a { opacity: .3333; cursor: pointer }
 		  div#forw.a { opacity: .3333; cursor: pointer }
 
@@ -985,6 +985,12 @@
 		opacity: .75
 
 	} /* mainstream italics */
+
+	div#txt div.r {
+
+		text-transform: uppercase
+
+	} /* class for all rows */
 
 	div#txt div.live_link u,
 	div#txt div.semi_link u {
@@ -1204,7 +1210,8 @@
 
 	div#ovs div#cpic,
 	div#ovs div#epic,
-	div#ovs div#hpic {
+	div#ovs div#hpic,
+	div#ovs div#spic {
 
 		position: relative;
 		border-radius: 1vw;
@@ -1214,7 +1221,8 @@
 
 	div#ovs div#cpic img,
 	div#ovs div#epic img,
-	div#ovs div#hpic img {
+	div#ovs div#hpic img,
+	div#ovs div#spic img {
 
 		height: 100%;
 		border-radius: 1vw;
@@ -1222,6 +1230,13 @@
 		transform: translateX(-50%)
 
 	} /* TIO-embedded image */
+
+	div#ovs div#spic img {
+
+		width: 100%;
+		height: auto
+
+	} /* scale-to-fit image */
 
 	div#ovs div#evid {
 
@@ -1249,7 +1264,7 @@
 		border: 1px solid rgba(0, 0, 0, .5);
 		border-radius: 4vw;
 		background-color: rgba(255, 255, 255, 0.255);
-		background-image: url(2d/png/magnifier.png);
+		background-image: url(/2d/png/magnifier.png);
 		background-position: center;
 		background-repeat: no-repeat;
 		background-size: 88%
@@ -1271,7 +1286,7 @@
 		height: 7vw;
 		border-radius: 1vw;
 		background-size: 100%;
-		background-image: url(2d/png/r_hp.png);
+		background-image: url(/2d/png/r_hp.png);
 		opacity: .333;
 		cursor: pointer
 
@@ -1476,63 +1491,63 @@
 
 	}
 
-	div#osk.wide, div#osk.wide-L { background-image: url(2d/png/osk.png) }	       /* wide keyboard graphics */
-	div#ctl.wide, div#ctl.wide-L { background-image: url(2d/png/osk-ctl.png) }     /* Fn. key lit-up overlay */
-	div#osk.tall, div#osk.tall-L { background-image: url(2d/png/tsk.png) }	       /* tall keyboard graphics */
-	div#ctl.tall, div#ctl.tall-L { background-image: url(2d/png/tsk-ctl.png) }     /* Fn. key lit-up overlay */
-	div#osk.amc3, div#osk.amc3-L { background-image: url(2d/png/amc.png) }	       /* 3D model configuration */
-	div#ctl.amc0, div#ctl.amc0-L { background-image: none } 		       /* lit modelflags overlay */
-	div#osk.tmc3, div#osk.tmc3-L { background-image: url(2d/png/tmc.png) }	       /* 3D model configuration */
-	div#ctl.tmc0, div#ctl.tmc0-L { background-image: none } 		       /* lit modelflags overlay */
-	div#lfn.wide, div#lfn.wide-L { background-image: url(2d/png/amc-fn.png) }      /* Fn. key lit-up overlay */
-	div#lfn.tall, div#lfn.tall-L { background-image: url(2d/png/tmc-fn.png) }      /* Fn. key lit-up overlay */
+	div#osk.wide, div#osk.wide-L { background-image: url(/2d/png/osk.png) } 	/* wide keyboard graphics */
+	div#ctl.wide, div#ctl.wide-L { background-image: url(/2d/png/osk-ctl.png) }	/* Fn. key lit-up overlay */
+	div#osk.tall, div#osk.tall-L { background-image: url(/2d/png/tsk.png) } 	/* tall keyboard graphics */
+	div#ctl.tall, div#ctl.tall-L { background-image: url(/2d/png/tsk-ctl.png) }	/* Fn. key lit-up overlay */
+	div#osk.amc3, div#osk.amc3-L { background-image: url(/2d/png/amc.png) } 	/* 3D model configuration */
+	div#ctl.amc0, div#ctl.amc0-L { background-image: none } 			/* lit modelflags overlay */
+	div#osk.tmc3, div#osk.tmc3-L { background-image: url(/2d/png/tmc.png) } 	/* 3D model configuration */
+	div#ctl.tmc0, div#ctl.tmc0-L { background-image: none } 			/* lit modelflags overlay */
+	div#lfn.wide, div#lfn.wide-L { background-image: url(/2d/png/amc-fn.png) }	/* Fn. key lit-up overlay */
+	div#lfn.tall, div#lfn.tall-L { background-image: url(/2d/png/tmc-fn.png) }	/* Fn. key lit-up overlay */
 
-	div#rfn.wide_L0, div#rfn.wide_L0-L { background-image: url(2d/png/amc-la.png) }
-	div#rfn.tall_L0, div#rfn.tall_L0-L { background-image: url(2d/png/tmc-la.png) }
-	div#rfn.wide_LX, div#rfn.wide_LX-L { background-image: url(2d/png/amc-la.png), url(2d/png/amc-ax.png) }
-	div#rfn.tall_LX, div#rfn.tall_LX-L { background-image: url(2d/png/tmc-la.png), url(2d/png/tmc-ax.png) }
-	div#rfn.wide_LZ, div#rfn.wide_LZ-L { background-image: url(2d/png/amc-la.png), url(2d/png/amc-az.png) }
-	div#rfn.tall_LZ, div#rfn.tall_LZ-L { background-image: url(2d/png/tmc-la.png), url(2d/png/tmc-az.png) }
-	div#rfn.wide_LH, div#rfn.wide_LH-L { background-image: url(2d/png/amc-la.png), url(2d/png/amc-ah.png) }
-	div#rfn.tall_LH, div#rfn.tall_LH-L { background-image: url(2d/png/tmc-la.png), url(2d/png/tmc-ah.png) }
-	div#rfn.wide_0X, div#rfn.wide_0X-L { background-image: url(2d/png/amc-ax.png) }
-	div#rfn.tall_0X, div#rfn.tall_0X-L { background-image: url(2d/png/tmc-ax.png) }
-	div#rfn.wide_0Z, div#rfn.wide_0Z-L { background-image: url(2d/png/amc-az.png) }
-	div#rfn.tall_0Z, div#rfn.tall_0Z-L { background-image: url(2d/png/tmc-az.png) }
-	div#rfn.wide_0H, div#rfn.wide_0H-L { background-image: url(2d/png/amc-ah.png) }
-	div#rfn.tall_0H, div#rfn.tall_0H-L { background-image: url(2d/png/tmc-ah.png) }
+	div#rfn.wide_L0, div#rfn.wide_L0-L { background-image: url(/2d/png/amc-la.png) }
+	div#rfn.tall_L0, div#rfn.tall_L0-L { background-image: url(/2d/png/tmc-la.png) }
+	div#rfn.wide_LX, div#rfn.wide_LX-L { background-image: url(/2d/png/amc-la.png), url(/2d/png/amc-ax.png) }
+	div#rfn.tall_LX, div#rfn.tall_LX-L { background-image: url(/2d/png/tmc-la.png), url(/2d/png/tmc-ax.png) }
+	div#rfn.wide_LZ, div#rfn.wide_LZ-L { background-image: url(/2d/png/amc-la.png), url(/2d/png/amc-az.png) }
+	div#rfn.tall_LZ, div#rfn.tall_LZ-L { background-image: url(/2d/png/tmc-la.png), url(/2d/png/tmc-az.png) }
+	div#rfn.wide_LH, div#rfn.wide_LH-L { background-image: url(/2d/png/amc-la.png), url(/2d/png/amc-ah.png) }
+	div#rfn.tall_LH, div#rfn.tall_LH-L { background-image: url(/2d/png/tmc-la.png), url(/2d/png/tmc-ah.png) }
+	div#rfn.wide_0X, div#rfn.wide_0X-L { background-image: url(/2d/png/amc-ax.png) }
+	div#rfn.tall_0X, div#rfn.tall_0X-L { background-image: url(/2d/png/tmc-ax.png) }
+	div#rfn.wide_0Z, div#rfn.wide_0Z-L { background-image: url(/2d/png/amc-az.png) }
+	div#rfn.tall_0Z, div#rfn.tall_0Z-L { background-image: url(/2d/png/tmc-az.png) }
+	div#rfn.wide_0H, div#rfn.wide_0H-L { background-image: url(/2d/png/amc-ah.png) }
+	div#rfn.tall_0H, div#rfn.tall_0H-L { background-image: url(/2d/png/tmc-ah.png) }
 
-	div#ctl.amc1, div#ctl.amc1-L { background-image: url(2d/png/amc1.png) }
-	div#ctl.amc2, div#ctl.amc2-L { background-image: url(2d/png/amc2.png) }
-	div#ctl.amc3, div#ctl.amc3-L { background-image: url(2d/png/amc2.png), url(2d/png/amc1.png) }
-	div#ctl.amc4, div#ctl.amc4-L { background-image: url(2d/png/amc4.png) }
-	div#ctl.amc5, div#ctl.amc5-L { background-image: url(2d/png/amc4.png), url(2d/png/amc1.png) }
-	div#ctl.amc6, div#ctl.amc6-L { background-image: url(2d/png/amc4.png), url(2d/png/amc2.png) }
-	div#ctl.amc7, div#ctl.amc7-L { background-image: url(2d/png/amc4.png), url(2d/png/amc2.png), url(2d/png/amc1.png) }
-	div#ctl.amc8, div#ctl.amc8-L { background-image: url(2d/png/amc8.png) }
-	div#ctl.amc9, div#ctl.amc9-L { background-image: url(2d/png/amc8.png), url(2d/png/amc1.png) }
-	div#ctl.amcA, div#ctl.amcA-L { background-image: url(2d/png/amc8.png), url(2d/png/amc2.png) }
-	div#ctl.amcB, div#ctl.amcB-L { background-image: url(2d/png/amc8.png), url(2d/png/amc2.png), url(2d/png/amc1.png) }
-	div#ctl.amcC, div#ctl.amcC-L { background-image: url(2d/png/amc8.png), url(2d/png/amc4.png) }
-	div#ctl.amcD, div#ctl.amcD-L { background-image: url(2d/png/amc8.png), url(2d/png/amc4.png), url(2d/png/amc1.png) }
-	div#ctl.amcE, div#ctl.amcE-L { background-image: url(2d/png/amc8.png), url(2d/png/amc4.png), url(2d/png/amc2.png) }
-	div#ctl.amcF, div#ctl.amcF-L { background-image: url(2d/png/amc8.png), url(2d/png/amc4.png), url(2d/png/amc2.png), url(2d/png/amc1.png) }
+	div#ctl.amc1, div#ctl.amc1-L { background-image: url(/2d/png/amc1.png) }
+	div#ctl.amc2, div#ctl.amc2-L { background-image: url(/2d/png/amc2.png) }
+	div#ctl.amc3, div#ctl.amc3-L { background-image: url(/2d/png/amc2.png), url(/2d/png/amc1.png) }
+	div#ctl.amc4, div#ctl.amc4-L { background-image: url(/2d/png/amc4.png) }
+	div#ctl.amc5, div#ctl.amc5-L { background-image: url(/2d/png/amc4.png), url(/2d/png/amc1.png) }
+	div#ctl.amc6, div#ctl.amc6-L { background-image: url(/2d/png/amc4.png), url(/2d/png/amc2.png) }
+	div#ctl.amc7, div#ctl.amc7-L { background-image: url(/2d/png/amc4.png), url(/2d/png/amc2.png), url(/2d/png/amc1.png) }
+	div#ctl.amc8, div#ctl.amc8-L { background-image: url(/2d/png/amc8.png) }
+	div#ctl.amc9, div#ctl.amc9-L { background-image: url(/2d/png/amc8.png), url(/2d/png/amc1.png) }
+	div#ctl.amcA, div#ctl.amcA-L { background-image: url(/2d/png/amc8.png), url(/2d/png/amc2.png) }
+	div#ctl.amcB, div#ctl.amcB-L { background-image: url(/2d/png/amc8.png), url(/2d/png/amc2.png), url(/2d/png/amc1.png) }
+	div#ctl.amcC, div#ctl.amcC-L { background-image: url(/2d/png/amc8.png), url(/2d/png/amc4.png) }
+	div#ctl.amcD, div#ctl.amcD-L { background-image: url(/2d/png/amc8.png), url(/2d/png/amc4.png), url(/2d/png/amc1.png) }
+	div#ctl.amcE, div#ctl.amcE-L { background-image: url(/2d/png/amc8.png), url(/2d/png/amc4.png), url(/2d/png/amc2.png) }
+	div#ctl.amcF, div#ctl.amcF-L { background-image: url(/2d/png/amc8.png), url(/2d/png/amc4.png), url(/2d/png/amc2.png), url(/2d/png/amc1.png) }
 
-	div#ctl.tmc1, div#ctl.tmc1-L { background-image: url(2d/png/tmc1.png) }
-	div#ctl.tmc2, div#ctl.tmc2-L { background-image: url(2d/png/tmc2.png) }
-	div#ctl.tmc3, div#ctl.tmc3-L { background-image: url(2d/png/tmc2.png), url(2d/png/tmc1.png) }
-	div#ctl.tmc4, div#ctl.tmc4-L { background-image: url(2d/png/tmc4.png) }
-	div#ctl.tmc5, div#ctl.tmc5-L { background-image: url(2d/png/tmc4.png), url(2d/png/tmc1.png) }
-	div#ctl.tmc6, div#ctl.tmc6-L { background-image: url(2d/png/tmc4.png), url(2d/png/tmc2.png) }
-	div#ctl.tmc7, div#ctl.tmc7-L { background-image: url(2d/png/tmc4.png), url(2d/png/tmc2.png), url(2d/png/tmc1.png) }
-	div#ctl.tmc8, div#ctl.tmc8-L { background-image: url(2d/png/tmc8.png) }
-	div#ctl.tmc9, div#ctl.tmc9-L { background-image: url(2d/png/tmc8.png), url(2d/png/tmc1.png) }
-	div#ctl.tmcA, div#ctl.tmcA-L { background-image: url(2d/png/tmc8.png), url(2d/png/tmc2.png) }
-	div#ctl.tmcB, div#ctl.tmcB-L { background-image: url(2d/png/tmc8.png), url(2d/png/tmc2.png), url(2d/png/tmc1.png) }
-	div#ctl.tmcC, div#ctl.tmcC-L { background-image: url(2d/png/tmc8.png), url(2d/png/tmc4.png) }
-	div#ctl.tmcD, div#ctl.tmcD-L { background-image: url(2d/png/tmc8.png), url(2d/png/tmc4.png), url(2d/png/tmc1.png) }
-	div#ctl.tmcE, div#ctl.tmcE-L { background-image: url(2d/png/tmc8.png), url(2d/png/tmc4.png), url(2d/png/tmc2.png) }
-	div#ctl.tmcF, div#ctl.tmcF-L { background-image: url(2d/png/tmc8.png), url(2d/png/tmc4.png), url(2d/png/tmc2.png), url(2d/png/tmc1.png) }
+	div#ctl.tmc1, div#ctl.tmc1-L { background-image: url(/2d/png/tmc1.png) }
+	div#ctl.tmc2, div#ctl.tmc2-L { background-image: url(/2d/png/tmc2.png) }
+	div#ctl.tmc3, div#ctl.tmc3-L { background-image: url(/2d/png/tmc2.png), url(/2d/png/tmc1.png) }
+	div#ctl.tmc4, div#ctl.tmc4-L { background-image: url(/2d/png/tmc4.png) }
+	div#ctl.tmc5, div#ctl.tmc5-L { background-image: url(/2d/png/tmc4.png), url(/2d/png/tmc1.png) }
+	div#ctl.tmc6, div#ctl.tmc6-L { background-image: url(/2d/png/tmc4.png), url(/2d/png/tmc2.png) }
+	div#ctl.tmc7, div#ctl.tmc7-L { background-image: url(/2d/png/tmc4.png), url(/2d/png/tmc2.png), url(/2d/png/tmc1.png) }
+	div#ctl.tmc8, div#ctl.tmc8-L { background-image: url(/2d/png/tmc8.png) }
+	div#ctl.tmc9, div#ctl.tmc9-L { background-image: url(/2d/png/tmc8.png), url(/2d/png/tmc1.png) }
+	div#ctl.tmcA, div#ctl.tmcA-L { background-image: url(/2d/png/tmc8.png), url(/2d/png/tmc2.png) }
+	div#ctl.tmcB, div#ctl.tmcB-L { background-image: url(/2d/png/tmc8.png), url(/2d/png/tmc2.png), url(/2d/png/tmc1.png) }
+	div#ctl.tmcC, div#ctl.tmcC-L { background-image: url(/2d/png/tmc8.png), url(/2d/png/tmc4.png) }
+	div#ctl.tmcD, div#ctl.tmcD-L { background-image: url(/2d/png/tmc8.png), url(/2d/png/tmc4.png), url(/2d/png/tmc1.png) }
+	div#ctl.tmcE, div#ctl.tmcE-L { background-image: url(/2d/png/tmc8.png), url(/2d/png/tmc4.png), url(/2d/png/tmc2.png) }
+	div#ctl.tmcF, div#ctl.tmcF-L { background-image: url(/2d/png/tmc8.png), url(/2d/png/tmc4.png), url(/2d/png/tmc2.png), url(/2d/png/tmc1.png) }
 
 	div#osk.tmc3 div#thickness, div#osk.tmc3-L div#thickness { bottom: 12.2em }
 	div#osk.tmc3 div#spacing,   div#osk.tmc3-L div#spacing	 { bottom:  8.7em }
@@ -1643,14 +1658,8 @@
 	div#txt.ACN div#curw div.link { color: #000; text-shadow: none }
 	div#txt.ACN div#curw, div#txt.ACN div#curw em, div#txt.ACN div#curw b { opacity: 1; color: #000; background-color: #EEF; text-shadow: none }
 
-	div#ovs.ACN div#cpic, div#ovs.ACN div#epic { mix-blend-mode: darken }
-	div#ovs.ACN div#cpic img, div#ovs.ACN div#epic img { filter: brightness(1.04) contrast(1.1) }
-
-	div#ovs.ACN div#r_fw, div#ovs.ACN div#r_nf {
-
-		background-color: #FFF
-
-	}
+	div#ovs.ACN div#cpic, div#ovs.ACN div#epic, div#ovs.ACN div#spic { mix-blend-mode: darken }
+	div#ovs.ACN div#cpic img, div#ovs.ACN div#epic img, div#ovs.ACN div#spic img { filter: brightness(1.04) contrast(1.1) }
 
 	/*
 	 *	styles: ATARI (ATR)
@@ -1688,14 +1697,16 @@
 	div#ovs.ATR { background: none }
 
 	div#ovs.ATR div#cpic,
-	div#ovs.ATR div#epic {
+	div#ovs.ATR div#epic,
+	div#ovs.ATR div#spic {
 
 		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACAQMAAACjTyRkAAAABlBMVEUAAAD///+l2Z/dAAAAAnRSTlMxALDOyooAAAATSURBVHheBcABDQAAAECwRxfd0ACEAIHyzgr8AAAAAElFTkSuQmCC')
 
 	}
 
 	div#ovs.ATR div#cpic img,
-	div#ovs.ATR div#epic img {
+	div#ovs.ATR div#epic img,
+	div#ovs.ATR div#spic img {
 
 		filter: brightness(1.04) contrast(1.1);
 		mix-blend-mode: darken
@@ -1746,13 +1757,16 @@
 	div#cbd.C64,
 	div#cbd.C64 div#usageNote,
 	div#ovs.C64 div#cpic,
-	div#ovs.C64 div#epic {
+	div#ovs.C64 div#epic,
+	div#ovs.C64 div#spic {
 
 		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACAQMAAACjTyRkAAAABlBMVEUAAAD///+l2Z/dAAAAAnRSTlMxALDOyooAAAATSURBVHheBcABDQAAAECwRxfd0ACEAIHyzgr8AAAAAElFTkSuQmCC')
 
 	}
 
-	div#ovs.C64 div#cpic img, div#ovs.C64 div#epic img {
+	div#ovs.C64 div#cpic img,
+	div#ovs.C64 div#epic img,
+	div#ovs.C64 div#spic img {
 
 		filter: brightness(1.04) contrast(1.1);
 		mix-blend-mode: darken
@@ -1771,12 +1785,6 @@
 	div#cbd.C64 div#usageNote {
 
 		background-color: #9e99e9
-
-	}
-
-	div#ovs.C64 div#r_nf {
-
-		opacity: .5
 
 	}
 
@@ -1806,8 +1814,8 @@
 	div#txt.CGA div#curw div.link { color: #000; text-shadow: none }
 	div#txt.CGA div#curw, div#txt.CGA div#curw em, div#txt.CGA div#curw b { opacity: 1; color: #000; background-color: #8F4; text-shadow: none }
 
-	div#ovs.CGA div#cpic, div#ovs.CGA div#epic { mix-blend-mode: darken }
-	div#ovs.CGA div#cpic img, div#ovs.CGA div#epic img, div#ovs.CGA div#evid { filter: brightness(.92) sepia(1) hue-rotate(60deg) saturate(1.4) }
+	div#ovs.CGA div#cpic, div#ovs.CGA div#epic, div#ovs.CGA div#spic { mix-blend-mode: darken }
+	div#ovs.CGA div#cpic img, div#ovs.CGA div#epic img, div#ovs.CGA div#spic img, div#ovs.CGA div#evid { filter: brightness(.92) sepia(1) hue-rotate(60deg) saturate(1.4) }
 
 	div#cbd.CGA, div#qtn.CGA, div#att.CGA, div#pad.CGA, div#txt.CGA div#linkertip, div#cbd.CGA div#usageNote { background-color: #AF8 }
 	div#cbd.CGA-L, div#qtn.CGA-L, div#att.CGA-L, div#pad.CGA-L, div#txt.CGA-L div#linkertip, div#cbd.CGA-L div#usageNote { background-color: #AF8 }
@@ -1829,13 +1837,13 @@
 	div#hdl.LCD, div#hdr.LCD { background-color: #B2B3A8 }
 	div#hdl.LCS, div#hdr.LCS { background-color: #C2C8C8 }
 
-	div#scn.LCD, div#scn.LCD-L, div#pag.LCD, div#pag.LCD-L, body.LCD { background-color: #B2B3A8; background-image: url(2d/png/lcd.png); background-size: 88px }
+	div#scn.LCD, div#scn.LCD-L, div#pag.LCD, div#pag.LCD-L, body.LCD { background-color: #B2B3A8; background-image: url(/2d/png/lcd.png); background-size: 88px }
 	div#scn.LCD div#ball, div#scn.LCD-L div#ball { background-color: #B2B3A8; color: #000 }
 	div#scn.LCS div#ball, div#scn.LCS-L div#ball { background-color: #C2C8C8; color: #000 }
 	div#scn.LCD div#pointerIn, div#scn.LCD-L div#pointerIn { border-color: #B2B3A8 }
 	div#scn.LCS div#pointerIn, div#scn.LCS-L div#pointerIn { border-color: #C2C8C8 }
 	div#hlp.LCD, div#hlp.LCS { border-bottom: 2px solid rgba(0,0,0,.5) }
-	div#pag.LCS, div#pag.LCS-L { background-color: #C2C8C8; background-image: url(2d/png/lcs.png); background-size: 88px }
+	div#pag.LCS, div#pag.LCS-L { background-color: #C2C8C8; background-image: url(/2d/png/lcs.png); background-size: 88px }
 
 	div#scn.LCD div#cml, div#scn.LCD-L div#cml, div#scn.LCS div#cml, div#scn.LCS-L div#cml { border-left: 1px solid rgba(0, 0, 0, .33) }
 	div#scn.LCD div#cmr, div#scn.LCD-L div#cmr, div#scn.LCS div#cmr, div#scn.LCS-L div#cmr { border-right: 1px solid rgba(0, 0, 0, .33) }
@@ -1863,8 +1871,8 @@
 	div#txt.LCD div#curw, div#txt.LCS div#curw { opacity: 1; color: #B2B3A8; text-shadow: none }
 
 	div#ovs.LCD, div#ovs.LCS { mix-blend-mode: multiply }
-	div#ovs.LCD div#cpic img, div#ovs.LCD div#epic img, div#ovs.LCD div#evid { filter: saturate(0) }
-	div#ovs.LCS div#cpic img, div#ovs.LCS div#epic img, div#ovs.LCS div#evid { filter: saturate(0) }
+	div#ovs.LCD div#cpic img, div#ovs.LCD div#epic img, div#ovs.LCD div#spic img, div#ovs.LCD div#evid { filter: saturate(0) }
+	div#ovs.LCS div#cpic img, div#ovs.LCS div#epic img, div#ovs.LCS div#spic img, div#ovs.LCS div#evid { filter: saturate(0) }
 	div#clc.LCD, div#top.LCD, div#ovs.LCD, div#clc.LCS, div#top.LCS, div#ovs.LCS { background: none }
 	div#cbd.LCD, div#qtn.LCD, div#att.LCD, div#pad.LCD, div#txt.LCD div#linkertip, div#cbd.LCD div#usageNote { background-color: #B2B3A8 }
 	div#pad.LCS, div#txt.LCS div#linkertip { background-color: #D2D8D8 }
@@ -1890,12 +1898,12 @@
 
 	}
 
-	div#hdl.NBL { background-color: #292929; background-image: url(2d/jpg/page-l-l.jpg) }
-	div#hdr.NBL { background-color: #484848; background-image: url(2d/jpg/page-l-r.jpg); background-position: top left }
-	div#hdl.NBT { background-color: #2E2E2E; background-image: url(2d/jpg/page-t-l.jpg) }
-	div#hdr.NBT { background-color: #575757; background-image: url(2d/jpg/page-t-r.jpg); background-position: top left }
-	div#hdl.NBR { background-color: #242424; background-image: url(2d/jpg/page-r-l.jpg) }
-	div#hdr.NBR { background-color: #484848; background-image: url(2d/jpg/page-r-r.jpg); background-position: top left }
+	div#hdl.NBL { background-color: #292929; background-image: url(/2d/jpg/page-l-l.jpg) }
+	div#hdr.NBL { background-color: #484848; background-image: url(/2d/jpg/page-l-r.jpg); background-position: top left }
+	div#hdl.NBT { background-color: #2E2E2E; background-image: url(/2d/jpg/page-t-l.jpg) }
+	div#hdr.NBT { background-color: #575757; background-image: url(/2d/jpg/page-t-r.jpg); background-position: top left }
+	div#hdl.NBR { background-color: #242424; background-image: url(/2d/jpg/page-r-l.jpg) }
+	div#hdr.NBR { background-color: #484848; background-image: url(/2d/jpg/page-r-r.jpg); background-position: top left }
 
 	div#hdl.NBL {
 
@@ -1924,9 +1932,9 @@
 	div#hdl.NBL div#back, div#hdl.NBT div#back, div#hdl.NBR div#back { background-position: 1.5vw center }
 	div#hdr.NBL div#forw, div#hdr.NBT div#forw, div#hdr.NBR div#forw { background-position: 1.5vw center }
 
-	div#scn.NBL, div#scn.NBL-L, div#pag.NBL, div#pag.NBL-L, div#txt.NBL, div#txt.NBL-L { background-color: #C8C8C8; background-image: url(2d/jpg/page-l-m.jpg); background-size: auto 120px; background-position: 0 0 }
-	div#scn.NBT, div#scn.NBT-L, div#pag.NBT, div#pag.NBT-L, div#txt.NBL, div#txt.NBL-L { background-color: #E2E2E2; background-image: url(2d/jpg/page-t-m.jpg); background-size: auto 120px; background-position: 0 0 }
-	div#scn.NBR, div#scn.NBR-L, div#pag.NBR, div#pag.NBR-L, div#txt.NBL, div#txt.NBL-L { background-color: #D6D6D6; background-image: url(2d/jpg/page-r-m.jpg); background-size: auto 120px; background-position: 0 0 }
+	div#scn.NBL, div#scn.NBL-L, div#pag.NBL, div#pag.NBL-L, div#txt.NBL, div#txt.NBL-L { background-color: #C8C8C8; background-image: url(/2d/jpg/page-l-m.jpg); background-size: auto 120px; background-position: 0 0 }
+	div#scn.NBT, div#scn.NBT-L, div#pag.NBT, div#pag.NBT-L, div#txt.NBL, div#txt.NBL-L { background-color: #E2E2E2; background-image: url(/2d/jpg/page-t-m.jpg); background-size: auto 120px; background-position: 0 0 }
+	div#scn.NBR, div#scn.NBR-L, div#pag.NBR, div#pag.NBR-L, div#txt.NBL, div#txt.NBL-L { background-color: #D6D6D6; background-image: url(/2d/jpg/page-r-m.jpg); background-size: auto 120px; background-position: 0 0 }
 
 	div#hdl.NBL,
 	div#hdl.NBT,
@@ -1986,9 +1994,9 @@
 	div#txt.NBL div#curw, div#txt.NBT div#curw, div#txt.NBR div#curw { opacity: 1; color: #000; background-color: rgba(0, 255, 0, .33); text-shadow: none }
 
 	div#ovs.NBL, div#ovs.NBT, div#ovs.NBR { mix-blend-mode: hard-light }
-	div#ovs.NBL div#cpic img, div#ovs.NBL div#epic img, div#ovs.NBL div#evid,
-	div#ovs.NBT div#cpic img, div#ovs.NBT div#epic img, div#ovs.NBT div#evid,
-	div#ovs.NBR div#cpic img, div#ovs.NBR div#epic img, div#ovs.NBR div#evid { filter: brightness(0.5) contrast(1.111) hue-rotate(-6deg) }
+	div#ovs.NBL div#cpic img, div#ovs.NBL div#epic img, div#ovs.NBL div#spic img, div#ovs.NBL div#evid,
+	div#ovs.NBT div#cpic img, div#ovs.NBT div#epic img, div#ovs.NBT div#spic img, div#ovs.NBT div#evid,
+	div#ovs.NBR div#cpic img, div#ovs.NBR div#epic img, div#ovs.NBR div#spic img, div#ovs.NBR div#evid { filter: brightness(0.5) contrast(1.111) hue-rotate(-6deg) }
 	div#clc.NBL, div#top.NBL, div#ovs.NBL,
 	div#clc.NBT, div#top.NBT, div#ovs.NBT,
 	div#clc.NBR, div#top.NBR, div#ovs.NBR { background: none }
@@ -2023,8 +2031,8 @@
 	div#txt.NDY div#curw div.link { color: #000; text-shadow: 0 0 2px #000 }
 	div#txt.NDY div#curw, div#txt.NDY div#curw em, div#txt.NDY div#curw b { color: #000; background-color: #8F4; text-shadow: 0 0 2px #000 }
 
-	div#ovs.NDY div#cpic, div#ovs.NDY div#epic { mix-blend-mode: darken }
-	div#ovs.NDY div#cpic img, div#ovs.NDY div#epic img, div#ovs.NDY div#evid { filter: sepia(1) hue-rotate(44deg) saturate(1.4) }
+	div#ovs.NDY div#cpic, div#ovs.NDY div#epic, div#ovs.NDY div#spic { mix-blend-mode: darken }
+	div#ovs.NDY div#cpic img, div#ovs.NDY div#epic img, div#ovs.NDY div#spic img, div#ovs.NDY div#evid { filter: sepia(1) hue-rotate(44deg) saturate(1.4) }
 
 	div#cbd.NDY, div#qtn.NDY, div#att.NDY, div#pad.NDY, div#txt.NDY div#linkertip, div#cbd.NDY div#usageNote { background-color: #AF8 }
 	div#cbd.NDY-L, div#qtn.NDY-L, div#att.NDY-L, div#pad.NDY-L, div#txt.NDY-L div#linkertip, div#cbd.NDY-L div#usageNote { background-color: #AF8 }
@@ -2061,8 +2069,8 @@
 	div#txt.P_1 div#curw div.link { color: #000; text-shadow: none }
 	div#txt.P_1 div#curw, div#txt.P_1 div#curw em, div#txt.P_1 div#curw b { opacity: 1; color: #000; background-color: #8F4; text-shadow: none }
 
-	div#ovs.P_1 div#cpic, div#ovs.P_1 div#epic { mix-blend-mode: darken }
-	div#ovs.P_1 div#cpic img, div#ovs.P_1 div#epic img, div#ovs.P_1 div#evid { filter: brightness(.92) sepia(1) hue-rotate(60deg) saturate(1.4) }
+	div#ovs.P_1 div#cpic, div#ovs.P_1 div#epic, div#ovs.P_1 div#spic { mix-blend-mode: darken }
+	div#ovs.P_1 div#cpic img, div#ovs.P_1 div#epic img, div#ovs.P_1 div#spic img, div#ovs.P_1 div#evid { filter: brightness(.92) sepia(1) hue-rotate(60deg) saturate(1.4) }
 
 	div#cbd.P_1, div#qtn.P_1, div#att.P_1, div#pad.P_1, div#txt.P_1 div#linkertip, div#cbd.P_1 div#usageNote { background-color: #AF8 }
 	div#cbd.P_1-L, div#qtn.P_1-L, div#att.P_1-L, div#pad.P_1-L, div#txt.P_1-L div#linkertip, div#cbd.P_1-L div#usageNote { background-color: #AF8 }
@@ -2112,8 +2120,8 @@
 	div#txt.P_3 div#curw div.link { color: #000; text-shadow: none }
 	div#txt.P_3 div#curw, div#txt.P_3 div#curw em, div#txt.P_3 div#curw b { opacity: 1; color: #000; background-color: #FD0; text-shadow: none }
 
-	div#ovs.P_3 div#cpic, div#ovs.P_3 div#epic { mix-blend-mode: darken }
-	div#ovs.P_3 div#cpic img, div#ovs.P_3 div#epic img, div#ovs.P_3 div#evid { filter: brightness(.9) sepia(1) contrast(1.1) hue-rotate(338deg) saturate(2) }
+	div#ovs.P_3 div#cpic, div#ovs.P_3 div#epic, div#ovs.P_3 div#spic { mix-blend-mode: darken }
+	div#ovs.P_3 div#cpic img, div#ovs.P_3 div#epic img, div#ovs.P_3 div#spic img, div#ovs.P_3 div#evid { filter: brightness(.9) sepia(1) contrast(1.1) hue-rotate(338deg) saturate(2) }
 
 	div#cbd.P_3, div#qtn.P_3, div#att.P_3, div#pad.P_3, div#txt.P_3 div#linkertip, div#cbd.P_3 div#usageNote { background-color: #FD8 }
 	div#cbd.P_3-L, div#qtn.P_3-L, div#att.P_3-L, div#pad.P_3-L, div#txt.P_3-L div#linkertip, div#cbd.P_3-L div#usageNote { background-color: #FD8 }
@@ -2161,8 +2169,8 @@
 	div#txt.P_4 div#curw div.link { color: #000; text-shadow: none }
 	div#txt.P_4 div#curw, div#txt.P_4 div#curw em, div#txt.P_4 div#curw b { opacity: 1; color: #000; background-color: #EEF; text-shadow: none }
 
-	div#ovs.P_4 div#cpic, div#ovs.P_4 div#epic { mix-blend-mode: darken }
-     /* div#ovs.P_4 div#cpic img, div#ovs.P_4 div#epic img, div#ovs.P_4 div#evid { filter: brightness(.9) sepia(1) contrast(1.1) hue-rotate(180deg) saturate(.5) } */
+	div#ovs.P_4 div#cpic, div#ovs.P_4 div#epic, div#ovs.P_4 div#spic { mix-blend-mode: darken }
+     /* div#ovs.P_4 div#cpic img, div#ovs.P_4 div#epic img, div#ovs.P_4 div#spic img, div#ovs.P_4 div#evid { filter: brightness(.9) sepia(1) contrast(1.1) hue-rotate(180deg) saturate(.5) } */
 
 	div#scn.P_4 div.mark, div#scn.P_4 div.markUp, div#scn.P_4 div.markDown { opacity: 1; background-color: #FFF }
 	div#scn.P_4 div.eraser { opacity: 1; background-color: #BBC }
@@ -2227,8 +2235,8 @@
 	div#txt.TVA div#curw div.link { color: #000; text-shadow: none }
 	div#txt.TVA div#curw, div#txt.TVA div#curw em, div#txt.TVA div#curw b { opacity: 1; color: #000; background-color: #F72; text-shadow: none }
 
-	div#ovs.TVA div#cpic, div#ovs.TVA div#epic { mix-blend-mode: darken }
-	div#ovs.TVA div#cpic img, div#ovs.TVA div#epic img, div#ovs.TVA div#evid { filter: brightness(.7) sepia(1) contrast(1.3) hue-rotate(340deg) saturate(3) }
+	div#ovs.TVA div#cpic, div#ovs.TVA div#epic, div#ovs.TVA div#spic { mix-blend-mode: darken }
+	div#ovs.TVA div#cpic img, div#ovs.TVA div#epic img, div#ovs.TVA div#spic img, div#ovs.TVA div#evid { filter: brightness(.7) sepia(1) contrast(1.3) hue-rotate(340deg) saturate(3) }
 
 	div#cbd.TVA, div#qtn.TVA, div#att.TVA, div#pad.TVA, div#txt.TVA div#linkertip, div#cbd.TVA div#usageNote { background-color: #F72 }
 	div#cbd.TVA-L, div#qtn.TVA-L, div#att.TVA-L, div#pad.TVA-L, div#txt.TVA-L div#linkertip, div#cbd.TVA-L div#usageNote { background-color: #F72 }
@@ -2339,7 +2347,7 @@
 	div#txt.VFD div#curw em { opacity: 1 }
 
 	div#ovs.VFD { mix-blend-mode: lighten; background-image: none }
-	div#ovs.VFD div#cpic img, div#ovs.VFD div#epic img { filter: contrast(1.25) }
+	div#ovs.VFD div#cpic img, div#ovs.VFD div#epic img, div#ovs.VFD div#spic img { filter: contrast(1.25) }
 
 	div#cbd.VFD, div#qtn.VFD, div#att.VFD { box-shadow: 0 0 6px rgba(224, 224, 255, .88); border: 0 }
 	div#cbd.VFD, div#qtn.VFD, div#att.VFD, div#pad.VFD, div#txt.VFD div#linkertip { background-color: rgba(224, 224, 255, .88) }
@@ -2368,7 +2376,7 @@
 	div#txt.VGA div.opt { color: #DDE; text-shadow: 0 0 12px #AAB, 0 0 3px #DDE }
 	div#txt.VGA div#curw div.link { color: #000; text-shadow: none }
 	div#txt.VGA div#curw, div#txt.VGA div#curw em, div#txt.VGA div#curw b { color: #000; background-color: #EEF; text-shadow: none }
-	/*div#ovs.VGA { mix-blend-mode: soft-light }*/
+	div#ovs.VGA { mix-blend-mode: soft-light }
 
 	/*
 	 *	array navigation
@@ -2376,10 +2384,10 @@
 
 	div#panel-l, div#panel-r, div#cruiser, div#arr, div#panels, div#rainbow, div#cat, div#boxs { position: absolute; top: 0; width: 100%; height: 100% }
 	div#panel-l, div#panel-r, div#cruiser, div#rainbow { background-repeat: no-repeat }
-	div#panel-l { background-image: url(2d/png/panel-l.png); background-position: bottom  left }
-	div#panel-r { background-image: url(2d/png/panel-r.png); background-position: bottom right }
-	div#cruiser { background-image: url(2d/png/cruiser.png); background-position: bottom  left }
-	div#rainbow { background-image: url(2d/png/rainbow.png); background-position: bottom right }
+	div#panel-l { background-image: url(/2d/png/panel-l.png); background-position: bottom  left }
+	div#panel-r { background-image: url(/2d/png/panel-r.png); background-position: bottom right }
+	div#cruiser { background-image: url(/2d/png/cruiser.png); background-position: bottom  left }
+	div#rainbow { background-image: url(/2d/png/rainbow.png); background-position: bottom right }
 	div#panel-l, div#panel-r, div#cruiser, div#rainbow { background-size: 28% auto; transition: opacity .25s }
 	div#stuff-l, div#stuff-r, div#panel-r span#areal, div#panel-r span#works { position: absolute; font: 2.5vw/1 panel; color: rgba(153,176,255,.5); text-shadow: 0 0 2px #FFF }
 	div#stuff-l { bottom: 0; left:	0; padding: 0 0 2.25em 6em }
@@ -2465,8 +2473,8 @@
 	@media screen and (pointer: fine) {
 
 		div#tsd { opacity: 1 }
-		div#ovs div#epic { cursor: zoom-in }
 		div#ovs div#epic div#magnifier { display: none }
+		div#ovs div#epic, div#ovs div#spic { cursor: zoom-in }
 
 	} /* if you have a mouse */
 

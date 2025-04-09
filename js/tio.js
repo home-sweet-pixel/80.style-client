@@ -8,7 +8,7 @@
 	 *	derives from the unpublished L.in.oleum 4 IDE
 	 *	=============================================
 	 *
-	 *	Copyright 2020-2024 by Alessandro Ghignola
+	 *	Copyright 2020-2025 by Alessandro Ghignola
 	 *	Public domain - but you're on your own. :)
 	 *
 	 */
@@ -63,6 +63,12 @@
 
 		ac: new Object (),			// autocomplete lists
 		ca: null,				// complete-as (internal text buffer)
+
+		/*
+		 *	tab stops' map, indexed by cursor position index
+		 */
+
+		tm: { 0: { prev: 0, next: 0 } },
 
 		/*
 		 *	U.I. default metrics:
@@ -140,6 +146,7 @@
 		ST: 0,					// flag: stop "typing" immediately, do full dump
 		zr: new Array,				// undo array (populated with objects)
 		lr: false,				// pick lone row for quick updates
+		up: false,				// update pending on active lone row
 		rr: null,				// reference row for mousemove handler
 
 		/*
@@ -237,6 +244,10 @@
 
 				return hold;
 
+			/*
+			 *	find writable areas
+			 */
+
 			tio.ot = new Array;
 			tio.l1 = +0xFFFFFF;
 			tio.l2 = -0xFFFFFF;
@@ -269,13 +280,53 @@
 
 					} // find first inactive area (cannot have more)
 
-			tio.onprocess.call ()
+			/*
+			 *	map tab stops, for tio.nextField and tio.prevField to use
+			 */
+
+			tio.tm = new Object (); 	// new and void map
+			hold = i = tio.ci;		// previous and starting position
+			raws = 1;			// raw stops: one for sure (this)
+
+			do {
+
+				tio.tm [i] = {
+
+					prev: hold,
+					next: i = tio.seekNextField ({ pos: hold = i })
+
+				};
+
+				if (tio.tm [i]) {
+
+					tio.tm [i].prev = hold;
+
+					if (raws > 1 && tio.tm [tio.ci].prev === tio.ci)
+
+						delete (tio.tm [tio.ci]);
+
+					break;
+
+				} // back to a known place: eventually, trash mid-field record
+
+			} while (++ raws);		// actually, an infinite counting loop
+
+			/*
+			 *	call client "onprocess handler",
+			 *	then process highlight patterns
+			 */
+
+			tio.onprocess.call ();
 
 			for (i in tio.hPatterns)
 
 				rows = rows.replace (tio.hPatterns [i], tio.hHandlers [i] || function () { return 'MISSING HIGHLIGHT REPLACEMENT HANDLER' });
 
-			rows = rows.split ('\n')
+			/*
+			 *	compose the screen
+			 */
+
+			rows = rows.split ('\n');
 
 			for (i in rows) {
 
@@ -289,7 +340,7 @@
 
 				if (iRow === currentRow) {
 
-					newCode = newCode + '<div style="height:' + tio.ch.toString () + 'px;padding-left:' + edge + ';left:-' + edge + ';min-width:calc(100%' + blank + '+' + blank + edge + ')" id="curw">' + tRow + '\n</div>';
+					newCode = newCode + '<div class="r" style="height:' + tio.ch.toString () + 'px;padding-left:' + edge + ';left:-' + edge + ';min-width:calc(100%' + blank + '+' + blank + edge + ')" id="curw">' + tRow + '\n</div>';
 					continue;
 
 				}
@@ -300,13 +351,13 @@
 
 				if (tio.lr && tio.cp && iRow === tio.cp.j) {
 
-					newCode = newCode + '<div style="height:' + tio.ch.toString () + 'px' + nudg + '" id="lrow">' + tRow + '\n</div>';
+					newCode = newCode + '<div class="r" style="height:' + tio.ch.toString () + 'px' + nudg + '" id="lrow">' + tRow + '\n</div>';
 					tio.lr = false;
 					continue;
 
 				}
 
-				newCode = newCode + '<div style="height:' + tio.ch.toString () + 'px' + nudg + '">' + tRow + '\n</div>';
+				newCode = newCode + '<div class="r" style="height:' + tio.ch.toString () + 'px' + nudg + '">' + tRow + '\n</div>';
 
 			}
 
@@ -1008,14 +1059,18 @@
 		},
 
 		/*
-		 *	brings the cursor to the beginning of the next DATA field or LINK
+		 *	seeks cursor position index for the next DATA field, or next LINK
 		 *	tag; if no such things are found past the cursor's position, will
-		 *	try and bring the cursor back to the first occurrence of one such
-		 *	field or tag; if nothing is found at all, leaves the cursor where
-		 *	it is...
+		 *	look for the active clip area (between tio.l1 and tio.l2), and if
+		 *	even that fails, bring the cursor back to the first occurrence of
+		 *	a field, tag, or active clip area; where nothing is found at all,
+		 *	leaves the cursor where it is
 		 */
 
-		nextField: function (picking) {
+		seekNextField: function (args) {
+
+		  const pos = be.number (args && args.pos).or (0);
+		  const opt = be.switch (args && args.opt).or (false);
 
 		  const optionLength = function (m) {
 
@@ -1038,21 +1093,13 @@
 
 			};
 
-		  const select = function (p) {
-
-				tio.positionCursor (tio.cp = p);
-				return tio;
-
-			};
-
-		  const t = tio.getInnerText ();
-
-		    var s = t.substr (tio.ci),
+		    var i = pos,
+			t = tio.getInnerText (),
+			s = t.substr (i),
 			m = tio.tg_data.exec (s),
 			n = tio.tg_link.exec (s),
 			p = tio.tg_pick.exec (s),
-			q = 0,
-			i = tio.ci;
+			q = 0;
 
 			m === null || (++ q);
 			n === null || (++ q);
@@ -1062,12 +1109,9 @@
 			n === null || (n.type = 'link');
 			p === null || (p.type = 'pick');
 
-			tio.lk = empty;
-			tio.ca === null || tio.setInnerText (tio.ca, tio.ca = null);
-
 			if (q === 0) {
 
-				s = t.substr (0, tio.ci);
+				s = t.substr (0, i);
 				m = tio.tg_data.exec (s);
 				n = tio.tg_link.exec (s);
 				p = tio.tg_pick.exec (s);
@@ -1083,15 +1127,15 @@
 
 				if (q === 0)
 
-					return (tio.l1 === 0xFFFFFF ? tio : select (tio.findCp (tio.ci = tio.findVCi (tio.bi, tio.l1))));
+					return (tio.l1 === 0xFFFFFF ? pos : tio.findVCi (tio.bi, tio.l1));
 
 			}
 
 			new Array (m, n, p).forEach (function (c) { (c ? c.index : this) >= (m ? m.index : this) || (m = c) }, 0x7FFFFFFF);
 
-			if (picking && picking.picking)
+			if (opt)
 
-				return select (tio.findCp (tio.ci = i + m.index + optionLength (m), t));
+				return i + m.index + optionLength (m);
 
 			switch (m.type) {
 
@@ -1103,33 +1147,132 @@
 				default:
 
 					m.endOf = optionLength (m);
-					break;
 
 			}
 
-			p = tio.findCp (tio.ci = i + m.index + m.endOf, t);
+			p = tio.findCp (i += m.index + m.endOf, t);
+			q = tio.findCp (pos).j;
 
-			if (tio.l1 === 0xFFFFFF)			// a clip area does not exist so select the next field, if there's one
+			if (tio.l1 === 0xFFFFFF)			// a clip area does not exist so select the next field (there was one)
 
-				return select (p);
+				return i;
 
-			if (p.j > tio.l1 && tio.cp.j < tio.l1)		// a clip area exists and the cursor crossed over that area's top line
+			if (p.j > tio.l1 && q < tio.l1) 		// a clip area exists and the cursor crossed over that area's top line
 
-				return select (tio.findCp (tio.ci = tio.findVCi (tio.bi, tio.l1)));
+				return tio.findVCi (tio.bi, tio.l1);
 
-			if (p.j < tio.cp.j && p.j > tio.l1)		// a clip area exists and the cursor moved back to a field beyond that
+			if (p.j < q && p.j > tio.l1)			// a clip area exists and the cursor moved back to a field beyond that
 
-				return select (tio.findCp (tio.ci = tio.findVCi (tio.bi, tio.l1)));
+				return tio.findVCi (tio.bi, tio.l1);
 
-			if (p.j < tio.cp.j && tio.cp.j < tio.l1)	// a clip area exists and the cursor moved back to a field before that
+			if (p.j < q && q < tio.l1)			// a clip area exists and the cursor moved back to a field before that
 
-				return select (tio.findCp (tio.ci = tio.findVCi (tio.bi, tio.l1)));
+				return tio.findVCi (tio.bi, tio.l1);
 
-			if (p.j === tio.cp.j)				// a clip area exists and the cursor wouldn't move to any other fields
+			if (p.j === q)					// a clip area exists and the cursor wouldn't move to any other fields
 
-				return select (tio.findCp (tio.ci = tio.findVCi (tio.bi, tio.l1)));
+				return tio.findVCi (tio.bi, tio.l1);
 
-			return select (p);
+			return i;
+
+		},
+
+		/*
+		 *	finish autocomplete chores
+		 */
+
+		complete: function () {
+
+			ModalTimeout.clr ({ id: 'tio.loner', as: tio.up = false })
+
+			tio.setInnerText (tio.ca);
+			tio.registerChange (tio.ca);
+			tio.ca = null;
+
+		},
+
+		/*
+		 *	positions the cursor on the next mapped tab stop
+		 */
+
+		nextField: function () {
+
+		    var pos = tio.ci,
+			rec = tio.tm [pos] || false;
+
+			tio.lk = empty;
+			tio.ca && tio.complete ();
+			tio.up && tio.update ();
+
+			if (rec)
+
+				return tio.positionCursor (tio.cp = tio.findCp (tio.ci = rec.next));
+
+			if (tio.writable ()) {
+
+				pos = tio.findVCi (tio.bi, tio.l1);
+				rec = tio.tm [pos] || false;
+
+				if (rec)
+
+					return tio.positionCursor (tio.cp = tio.findCp (tio.ci = rec.next));
+
+			}
+
+			if (tio.lineField ().data) {
+
+				pos = tio.findHCi (tio.lineField ().edge, tio.cp.j);
+				rec = tio.tm [pos] || false;
+
+				if (rec)
+
+					return tio.positionCursor (tio.cp = tio.findCp (tio.ci = rec.next));
+
+			}
+
+			return tio;
+
+		},
+
+		/*
+		 *	positions the cursor on the prev mapped tab stop
+		 */
+
+		prevField: function () {
+
+		    var pos = tio.ci,
+			rec = tio.tm [pos] || false;
+
+			tio.lk = empty;
+			tio.ca && tio.complete ();
+
+			if (rec)
+
+				return tio.positionCursor (tio.cp = tio.findCp (tio.ci = rec.prev));
+
+			if (tio.writable ()) {
+
+				pos = tio.findVCi (tio.bi, tio.l1);
+				rec = tio.tm [pos] || false;
+
+				if (rec)
+
+					return tio.positionCursor (tio.cp = tio.findCp (tio.ci = rec.prev));
+
+			}
+
+			if (tio.lineField ().data) {
+
+				pos = tio.findHCi (tio.lineField ().edge, tio.cp.j);
+				rec = tio.tm [pos] || false;
+
+				if (rec)
+
+					return tio.positionCursor (tio.cp = tio.findCp (tio.ci = rec.prev));
+
+			}
+
+			return tio;
 
 		},
 
@@ -1234,6 +1377,7 @@
 							id: 'tio.loner',
 							handler: tio.update,
 							msecs: 999,
+							implies: tio.up = true,
 							cos_we_only_do: $('lrow').innerHTML = lrow.substr (0, tio.cp.i) + this.key + '\n'
 
 						})
@@ -1250,7 +1394,7 @@
 
 			}
 
-			ModalTimeout.clr ({ id: 'tio.loner' })
+			tio.up && ModalTimeout.clr ({ id: 'tio.loner', as: tio.up = false })
 
 			if (be.switch (this.ghost).or (false) !== false) {
 
@@ -1329,14 +1473,13 @@
 
 			if (tio.onconfirm (f) === false) {
 
-				tio.ca === null || tio.setInnerText (tio.ca, tio.ca = null);
+				tio.ca && tio.complete ();
 				return tio;
 
 			} // if the onconfirm handler wanted to prevent default behavior
 
 			if (f.data) {
 
-				tio.ca === null || tio.setInnerText (tio.ca, tio.ca = null);
 				tio.nextField ();
 				return tio;
 
@@ -1344,7 +1487,7 @@
 
 			if (f.link) {
 
-				tio.ca === null || tio.setInnerText (tio.ca, tio.ca = null);
+				tio.ca && tio.complete ();
 				tio.onlinkrun.call ({ caller: tio.cp.j }, tio.linkedUri ());
 				return tio;
 
@@ -1352,8 +1495,8 @@
 
 			if (f.pick) {
 
-				tio.ca === null || tio.setInnerText (tio.ca, tio.ca = null);
-				tio.onpickrun ({ label: f.line.match (/\[(.+)\]/).pop () });
+				tio.ca && tio.complete ();
+				tio.onpickrun ({ label: be.vector (f.line.match (/\[(.+)\]/)).or (empty).pop () });
 				return tio;
 
 			} // if we're on an executable PICK, run the highlighted option
@@ -1936,8 +2079,8 @@
 		  const m = ~~ (l / tio.cw);
 		    var n = ~~ (t / tio.ch);
 
-			tio.ca === null || tio.setInnerText (tio.ca, tio.ca = null);
-			tio.TT === null || tio.stopTyping ();
+			tio.ca && tio.complete ();
+			tio.TT && tio.stopTyping ();
 
 			tio.lk = empty;
 
@@ -2111,7 +2254,7 @@
 
 				tio.setInnerText (r.join ('\n'));
 				tio.txt.innerHTML = tio.highlight (r.join ('\n'));
-				tio.nextField ({ where: tio.cp = tio.findCp (tio.ci = tio.findHCi (0x000000, tio.cp.j)), picking: true });
+				tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: tio.findHCi (0, tio.cp.j), opt: true })));
 
 			},
 
@@ -2130,7 +2273,8 @@
 
 				}
 
-				tio.putKey.call ({ key: e.key.toUpperCase (), loner: tio.writable () });
+				this.shifted && tio.putKey.call ({ key: e.key.toLowerCase (), loner: tio.writable () });
+				this.shifted || tio.putKey.call ({ key: e.key.toUpperCase (), loner: tio.writable () });
 
 			},
 
@@ -2236,7 +2380,7 @@
 
 				if (tio.onconfirm (f) === false) {
 
-					tio.ca === null || tio.setInnerText (tio.ca, tio.ca = null);
+					tio.ca && tio.complete ();
 					return tio;
 
 				} // if the onconfirm handler wanted to prevent default behavior
@@ -2266,6 +2410,16 @@
 					return tio.stopTyping ();
 
 				tio.nextField ();
+
+			},
+
+			ro_shiftTab: function () {
+
+				if (tio.TT)
+
+					return tio.stopTyping ();
+
+				tio.prevField ();
 
 			},
 
@@ -2354,8 +2508,6 @@
 			},
 
 			ro_home: function () {
-
-			  const r = tio.getInnerText ().substr (0, tio.ci).split ('\n') [tio.cp.j] || empty;
 
 				if (tio.writable ())
 
@@ -2532,24 +2684,43 @@
 
 						return tio.deleteKey.call ();
 
+					return;
+
 				}
 
-				if (tio.tg_data.test (r))
+				if (tio.tg_data.test (r)) {
+
+					if (tio.getSelection ().length)
+
+						return tio.deleteKey.call ();
 
 					t [tio.ci] === '\n' || tio.deleteKey.call ();
+
+				}
 
 			},
 
 			ro_paste: function () {
 
+			  const t = tio.getInnerText (), r = t.substr (0, tio.ci).split ('\n') [tio.cp.j] || empty;
+
+				if (tio.tg_data.test (r)) {
+
+					tio.cl.length == 0 || tio.cl.match (/\n/) || tio.pasteClip ();
+					return;
+
+				} // in data fields (accept nonbroken lines only)
+
 				if (tio.writable () === false || tio.pm === true)
 
 					return;
 
-				tio.cl.length && tio.pasteClip ()
-				tio.cl.length || tio.onmtpaste ()
+				tio.cl.length && tio.pasteClip ();
+				tio.cl.length || tio.onmtpaste ();
 
-			}
+			},
+
+			capsLock: function () { tio.kl = 1 - tio.kl }
 
 		},
 
@@ -2600,13 +2771,14 @@
 					Shortcut.add ('ctrl+x', 		tio.kbFunctions.cut);
 					Shortcut.add ('ctrl+c', 		tio.kbFunctions.copy);
 					Shortcut.add ('ctrl+v', 		tio.kbFunctions.ro_paste);
+					Shortcut.add ('capslock',		tio.kbFunctions.capsLock);
 
 					// editor keystrokes (constant bindings)
 
 					Shortcut.add ('space',			tio.kbFunctions.ro_space);
 					Shortcut.add ('shift+space',		tio.kbFunctions.ro_space);
 					Shortcut.add ('tab',			tio.kbFunctions.ro_tab);
-					Shortcut.add ('shift+tab',		tio.kbFunctions.ro_tab);
+					Shortcut.add ('shift+tab',		tio.kbFunctions.ro_shiftTab);
 					Shortcut.add ('enter',			tio.kbFunctions.ro_enter, { workInInput: tio.confirmInInput });
 					Shortcut.add ('backspace',		tio.kbFunctions.ro_backspace);
 					Shortcut.add ('delete', 		tio.kbFunctions.ro_delete);
@@ -2656,6 +2828,7 @@
 					Shortcut.add ('ctrl+f', 		tio.kbFunctions.find);
 					Shortcut.add ('f3',			tio.kbFunctions.findNext);
 					Shortcut.add ('ctrl+r', 		tio.kbFunctions.findAndReplace);
+					Shortcut.add ('capslock',		tio.kbFunctions.capsLock);
 
 					// editor keystrokes (constant bindings)
 
@@ -2739,32 +2912,32 @@
 			Shortcut.add ('/', tio.kbFunctions.key)
 			Shortcut.add ('?', tio.kbFunctions.key)
 
-			Shortcut.add ('shift+q', tio.kbFunctions.key)
-			Shortcut.add ('shift+w', tio.kbFunctions.key)
-			Shortcut.add ('shift+e', tio.kbFunctions.key)
-			Shortcut.add ('shift+r', tio.kbFunctions.key)
-			Shortcut.add ('shift+t', tio.kbFunctions.key)
-			Shortcut.add ('shift+y', tio.kbFunctions.key)
-			Shortcut.add ('shift+u', tio.kbFunctions.key)
-			Shortcut.add ('shift+i', tio.kbFunctions.key)
-			Shortcut.add ('shift+o', tio.kbFunctions.key)
-			Shortcut.add ('shift+p', tio.kbFunctions.key)
-			Shortcut.add ('shift+a', tio.kbFunctions.key)
-			Shortcut.add ('shift+s', tio.kbFunctions.key)
-			Shortcut.add ('shift+d', tio.kbFunctions.key)
-			Shortcut.add ('shift+f', tio.kbFunctions.key)
-			Shortcut.add ('shift+g', tio.kbFunctions.key)
-			Shortcut.add ('shift+h', tio.kbFunctions.key)
-			Shortcut.add ('shift+j', tio.kbFunctions.key)
-			Shortcut.add ('shift+k', tio.kbFunctions.key)
-			Shortcut.add ('shift+l', tio.kbFunctions.key)
-			Shortcut.add ('shift+z', tio.kbFunctions.key)
-			Shortcut.add ('shift+x', tio.kbFunctions.key)
-			Shortcut.add ('shift+c', tio.kbFunctions.key)
-			Shortcut.add ('shift+v', tio.kbFunctions.key)
-			Shortcut.add ('shift+b', tio.kbFunctions.key)
-			Shortcut.add ('shift+n', tio.kbFunctions.key)
-			Shortcut.add ('shift+m', tio.kbFunctions.key)
+			Shortcut.add ('shift+q', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+w', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+e', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+r', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+t', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+y', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+u', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+i', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+o', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+p', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+a', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+s', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+d', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+f', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+g', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+h', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+j', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+k', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+l', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+z', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+x', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+c', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+v', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+b', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+n', tio.kbFunctions.key.bind ({ shifted: true }))
+			Shortcut.add ('shift+m', tio.kbFunctions.key.bind ({ shifted: true }))
 
 			Shortcut.add ('shift+!', tio.kbFunctions.key)
 			Shortcut.add ('shift+@', tio.kbFunctions.key)
@@ -2846,6 +3019,7 @@
 			Shortcut.remove ('ctrl+f');
 			Shortcut.remove ('f3');
 			Shortcut.remove ('ctrl+r');
+			Shortcut.remove ('capslock');
 
 			// editor keystrokes (constant bindings)
 
@@ -3150,19 +3324,10 @@
 
 		update: function (args) {
 
-		     /* if (tio.ro)
-
-				enable_nonfunctional_picks || (contents = be.string (contents).or (empty).replace (tio.tg_opts, function (m0, s1, s2) {
-
-					if (/\[/.test (s2))
-
-						return (m0)
-						return (m0.replace (/\{([^]*?)\}/, '[$1]'))
-
-				})) // filter invalid options lines (make first option active, if no option was active) */
-
 		    let contents = be.string (args && args.content).or (args)
 		    let behavior = be.object (args && args.behavior).or ({ })
+
+			tio.up && ModalTimeout.clr ({ id: 'tio.loner', as: tio.up = false })
 
 			tio.ot = new Array
 			tio.l1 = +0xFFFFFF

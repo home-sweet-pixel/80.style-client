@@ -7,12 +7,12 @@
 	 *	80.style user interface - frontpage script
 	 *	==========================================
 	 *
-	 *	Copyright 2020-2024 by Alessandro Ghignola
+	 *	Copyright 2020-2025 by Alessandro Ghignola
 	 *	Public domain - but you're on your own. :)
 	 *
 	 */
 
-  const THEME = String ('T3C')			// default theme
+  const THEME = String ('ACN')			// default theme
     let FORCE = false				// forcing theme
     let NLAND = true				// consent landscape orientation
     let MSAYS = null				// element corresponding to Mary Lou's label note, in The Array
@@ -178,7 +178,7 @@
 
 			// adjust "superimpressions"
 
-		    let elem = $('cpic') || $('epic') || $('evid') || $('gate')
+		    let elem = $('cpic') || $('epic') || $('spic') || $('evid') || $('gate')
 
 			if (elem) {
 
@@ -1334,7 +1334,7 @@
 			'sys/rimuovi/la/copertina'			: 'sys/drop/home/cover/picture',
 			'sys/modifica/informativa'			: 'sys/edit/info/page',
 			'sys/carica/foto/profilo'			: 'sys/load/profile/picture',
-			'sys/cambia/riquadro/foto'			: 'sys/flip/profile/picture',
+			'sys/cambia/riquadro/foto'			: 'sys/flip/picture/framing',
 			'sys/rimuovi/foto/profilo'			: 'sys/drop/profile/picture',
 			'sys/modifica/annotazioni'			: 'sys/edit/profile',
 			'sys/salva/informativa' 			: 'sys/save/info/page',
@@ -1363,7 +1363,7 @@
 			'sys/aggiungi/immagine' 			: 'sys/load/page/cover/picture',
 			'sys/salva/la/modifica' 			: 'sys/save/changes',
 			'sys/sospendi/modifica' 			: 'sys/quit/editing',
-			'sys/riquadra/immagine' 			: 'sys/flip/page/cover/picture',
+			'sys/riquadra/immagine' 			: 'sys/flip/page/picture/frame',
 			'sys/cancella/immagine' 			: 'sys/drop/page/cover/picture',
 			'sys/rimuovi/la/pagina' 			: 'sys/drop/this/page',
 			'sys/salva/questa/pagina'			: 'sys/save/changes',
@@ -1683,6 +1683,10 @@
 			nav.st.pp_status.start = false
 			nav.st.pp_status.endof = null
 			nav.st.pp_status.e_o_l = false
+			nav.st.pp_status.ntity = false
+			nav.st.pp_status.lower = false
+			nav.st.pp_status.lcase = 0
+			nav.st.pp_status.total = 1
 
 		} // called ahead of all tio.hHandlers
 
@@ -1696,7 +1700,7 @@
 			tops: RegExp ('(\\n|^)\\`(\\s+)(AS|IN)\\:\\s+([^\\n]+)'),
 			home: RegExp ('\\bHOME\\x20\\`\\`\\x20([^\\n]+)'),					//	apparently, coalescing these into one global exp
 			menu: RegExp ('\\bM\\x20\\`\\`\\x20([^\\n]+)'), 					//	won't speed up highlight's times; I have no idea
-			pict: RegExp ('\\bPICT\\x20\\`\\`\\x20([^\\n]+)'),					//	how RegExps are compiled and work, so... just so
+			pict: RegExp ('\\bPICT\\x20\\`\\`\\x20([^\\n]+)(\\n*)'),				//	how RegExps are compiled and work, so... just so
 			show: RegExp ('\\bSHOW\\x20\\`\\`\\x20([^\\n]+)'),					//	I remember this seemed a good move, but it's not
 			gate: RegExp ('\\{GATE\\}'),
 			data: RegExp ('\\b(DATA|\\d{4})\\x20\\`\\`\\x20(.*?\\`\\x20)([^\\n]*)', 'g'),
@@ -1720,7 +1724,7 @@
 
 			posp: RegExp ('[^]', 'g')		// just pass all characters
 
-		}
+		} // T.I.O highlighters for pages
 
 		cui.hPatterns.notes = {
 
@@ -1741,12 +1745,19 @@
 			fram: RegExp ('([^\\-\\=])([\\-\\=]{2,})([^\\-\\=]|$)', 'g'),
 			href: RegExp ('((http(s?)\\:\\/\\/)|(www\\.)|(\\#\\/))([^\\s]+)', 'gi'),
 			rays: RegExp ('(\\b|\\/)(\\d{4})\\.(\\d{4})\\b', 'g'),
+			tags: RegExp ('(\\s|^)(\\@[A-Z0-9_]+)', 'g'),
 
 			// cosmetic postprocessor
 
 			posp: RegExp ('[^]', 'g')		// just pass all characters
 
-		}
+		} // T.I.O highlighters for notes
+
+		cui.hPatterns.opcon = {
+
+			rulr: RegExp ('(\\n|^)(\\x20*)([\\-\\=])(\\n|$)', 'g')
+
+		} // T.I.O highlighters for the system operator console
 
 		tio.hHandlers = {
 
@@ -1792,28 +1803,44 @@
 				if (h.startsWith ('#/')) {
 
 				    let s = h.substr (2)
-				    let p = s.split ('/').shift (), q = p.toLowerCase ()
 
-					if (/\d{4}\.\d{4}/.test (s))				// #/1234.1234
+					if (/\d{4}\.\d{4}/.test (s))					// #/1234.1234 (areal link)
 
 						return (m)
 
-					if (s.indexOf (slash) == -1)
+				    let p = s.split (slash).shift ()
+				    let q = p.toLowerCase ()
 
-						s = s.split (/\W/).shift ()			// #/KAI'S -> kai
+					if (s.startsWith (point + slash)) {
 
-					if (s.startsWith ('ABOUT/'))
+						p = s.split (slash) [1] || empty
+						q = p.toLowerCase ()
 
-						s = s.split (/\W/).slice (0, 2).join (slash)	// #/ABOUT/KAI'S -> about/kai
+						p === q && (s =     nav.thatUser ()  + s.substr (1))	// #/./page -> #/kai/page
+						p === q || (s = rc (nav.thatUser ()) + s.substr (1))	// #/./PAGE -> #/KAI/PAGE
+
+					} // short-form local
+
+					else {
+
+						if (s.indexOf (slash) == -1)
+
+							s = s.split (/\W/).shift ()			// #/KAI'S -> kai
+
+						if (s.startsWith ('ABOUT/'))
+
+							s = s.split (/\W/).slice (0, 2).join (slash)	// #/ABOUT/KAI'S -> about/kai
+
+					} // all other locals
 
 					if (s.match (/\[full\]$/gi)) {
 
 						m = m.split (/\s*\[full\]$/gi).shift ()
 						s = s.split (/\s*\[full\]$/gi).shift () + '~full'
 
-					}
+					} // transfer ~full (screen) mode spec to URL, hide from view
 
-					return ('<div class="live_link" onclick="nav.to(0,\'' + (p === q ? s : s.toLowerCase ()) + '\')">' + m + '</div>')
+					return ('<div class="live_link" onclick="nav.to(0,\'' + (p === q ? s : rc (s)) + '\')">' + (p === q ? rc (m) : m) + '</div>')
 
 				} // in local links, letter case matters where pages are referred, because they can hold punctuation, that we represent
 				  // as lower-case letters; when the link was pasted from the TIO clipboard, it needs to be left alone, case-wise: this
@@ -1827,23 +1854,23 @@
 				  // as one pasted by the TIO clipboard (reminder: the TIO clipboard is updated to hold a page's internal link when you
 				  // pick the option to "share this page")
 
-				h = h.replace (/\b80\.style(\/acn|atr|c64|[cv]ga|lc[ds]|nb[lrt]|ndy|p_[13]|t3c|tva|vfd)?(?:(\/(?:\#|hash)\/)(.))(.*)/i, function (m, a, b, c, d) {
+			     /* h = h.replace (/\b80\.style(\/acn|atr|c64|[cv]ga|lc[ds]|nb[lrt]|ndy|p_[13]|t3c|tva|vfd)?(?:(\/(?:\#|hash)\/)(.))(.*)/i, function (m, a, b, c, d) {
 
 				    let p = c.charAt (0)
 				    let q = p.toLowerCase ()
 				    let r = String ('80.style') + (a || empty) + (b) + (c) + (d || empty)
 
-					return (p == q ? r : r.toLowerCase ())
+					return (p === q ? r : r.toLowerCase ())
 
-				})
+				}) */ // I'm not sure why I was forcing links to 80.style to lowercase, apparently, here
 
 				if (/^w{3}/i.test (h))
 
-					return ('<a target="_blank" href="http://' + h + '">' + m + '</a>')
+					return ('<a target="_blank" href="http://' + h + '">' + m.toUpperCase () + '</a>')
 
 				if (/^http/i.test (h))
 
-					return ('<a target="_blank" href="' + h + '">' + m + '</a>')
+					return ('<a target="_blank" href="' + h + '">' + m.toUpperCase () + '</a>')
 
 				return (m)
 
@@ -1881,6 +1908,12 @@
 
 					return (m)
 					return ('<div class="live_link" onclick="nav.to(0,\'' + m + '\')">' + m + '</div>')
+
+			},
+
+			tags: function (m, s, t) {
+
+				return (s + '<div class="semi_link" onclick="nav.to(0,\'about' + slash + t.toLowerCase ().substr (1) + '\')">' + t + '</div>')
 
 			},
 
@@ -1990,41 +2023,36 @@
 
 			},
 
-			pict: function (m, s) {
+			pict: function (m, s, t) {
 
 			    let F = nav.pp || nav.np ? 'full' : 'fune'
 			    let l = rc (s)
 			    let c = tio.findCp (tio.it.match (tio.hPatterns.pict).index + 2)
-			    let h = (tio.ch * 14).toFixed (0)
-			    let v = (tio.ch * 20).toFixed (0)
+			    let h = Math.round (tio.ch * t.length)
+			    let f = l.split (slash).pop ().split ('-').shift ()
+			    let i = f === 'g' || f === 'h' || f === 'm' || f === 'l' ? 'epic' : 'spic'
 
-			    let p = [ '<div id="epic"',
+			    let p = [ '<div id="' + i + '"',
 
 					'onclick="tio.onpgfocus(event)||nav.to(0,location.hash.substr(2)+\'~' + F + '\',{interstitial:true})"',
 					'style="width:' + (tio.cw * (tio.nc - 4)).toFixed (0) + 'px;height:'
 
 				].join (blank)
 
-				switch (l.split (slash).pop ().split ('-').shift ()) {
+				switch (f) {
 
 					case 'g':
+					case 'r':
+					case 'm':
 
-					    var r = p + h + 'px"' + blank + 'class="' + [ c.i, c.j, tio.nc - 4, 14 ].join (score) + '">' + '<img src="/' + l.replace (/\/g/, '/d')
+					    var r = p + h + 'px"' + blank + 'class="' + [ c.i, c.j, tio.nc - 4, t.length ].join (score) + '">' + '<img src="/' + l.replace (/\/[grm]/, '/d')
 						break
 
 					case 'h':
-
-					    var r = p + h + 'px"' + blank + 'class="' + [ c.i, c.j, tio.nc - 4, 14 ].join (score) + '">' + '<img src="/' + l
-						break
-
-					case 'r':
-
-					    var r = p + v + 'px"' + blank + 'class="' + [ c.i, c.j, tio.nc - 4, 20 ].join (score) + '">' + '<img src="/' + l.replace (/\/r/, '/d')
-						break
-
 					case 's':
+					case 'l':
 
-					    var r = p + v + 'px"' + blank + 'class="' + [ c.i, c.j, tio.nc - 4, 20 ].join (score) + '">' + '<img src="/' + l
+					    var r = p + h + 'px"' + blank + 'class="' + [ c.i, c.j, tio.nc - 4, t.length ].join (score) + '">' + '<img src="/' + l.replace (/\/l/, '/s')
 						break
 
 					default:
@@ -2068,7 +2096,7 @@
 
 					}, 999)
 
-					return (blank)
+					return (t)
 
 				}
 
@@ -2126,11 +2154,11 @@
 
 				tio.ot = [
 
-					'<div id="gate" style="width:' + w + 'px;height:' + h + 'px" class="' + [ c.i, c.j, W, H ].join (score) + '" title="' + t_gate + '" onclick="event&&gate.onclick(event)"></div>',
+					'<div id="gate" style="width:' + w + 'px;height:' + h + 'px" class="' + [ c.i, c.j, W, H ].join (score) + '" title="' + t_gate + '" onclick="event&&gate.onclick(event)"></div>'
 
 				     // '<div id="r_fw" title="' + t_r_fw + `" onclick="nav.to(0,'${t_final_words}')"></div>`,
 				     // '<div id="r_nf" title="' + t_r_nf + '" onclick="event&&gate.onclick(event,true)"></div>',
-					'<div id="r_hp" title="' + t_r_hp + '" onclick="nav.to(0,\'sys/about/the/array\')"></div>'
+				     // '<div id="r_hp" title="' + t_r_hp + '" onclick="nav.to(0,\'sys/about/the/array\')"></div>'
 
 				]
 
@@ -2421,11 +2449,24 @@
 
 							} // found: end-of-line in highlight, breaks if doubled
 
+							if (my.lower) {
+
+								my.e_o_l && (c = '</tt>' + c)
+								my.e_o_l && (my.lower = false)
+
+							} // found: end-of-line in lowercase, breaks if doubled
+
 							my.delim = true
 							my.e_o_l = true
 
 							my.rownr = my.rownr + 1
 							my.rownr - tio.l1 || tio.ai === 2 || (my.me = my.em)
+
+							break
+
+						case 38:
+
+							my.ntity = true
 
 							break
 
@@ -2455,9 +2496,16 @@
 							my.optag = true
 							my.e_o_l = false
 
+							if (my.lower) {
+
+								c = '</tt><'
+								my.lower = false
+
+							} // found: less than, opens tag, and breaks lower-case
+
 							if (my.endof) {
 
-								c = '</' + my.endof + '><'
+								c = '</' + my.endof + '>' + c
 								my.endof = null
 
 							} // found: less than, opens tag, and breaks highlights
@@ -2481,6 +2529,7 @@
 						default:
 
 							my.delim = my.common_punctuators.indexOf (a) > -1
+							my.delim ? my.ntity = false : 0
 							my.e_o_l = false
 
 							if (my.optag) {
@@ -2490,7 +2539,26 @@
 
 							} // found: less than, not followed by ASCII 47 (slash)
 
-							my.entag || a < 97 || a > 122 || (c = c.toUpperCase ())
+							if (a > 96 && a < 123) {
+
+								my.entag || my.ntity || my.lower || my.nolow || (c = '<tt>' + c)
+								my.entag || my.ntity || my.lower || my.nolow || (my.lower = true)
+												    my.entag || (my.lcase = my.lcase + my.count)
+												    my.entag || (my.total = my.total + my.count)
+
+							} // found: lowercase (which we'd like to make visible)
+
+							if ((a > 64 && a < 90) || (a > 47 && a < 58)) {
+
+								my.lower && (c = '</tt>' + c)
+								my.lower && (my.lower = false)
+								my.entag || (my.total = my.total + my.count)
+
+							} // found: uppercase or digit (which breaks lowercase)
+
+							if (my.count)
+
+								my.nolow = 3 * my.lcase >= my.total	// trigger smart lowercase prevention (above 33% detection threshold)
 
 					}
 
@@ -2583,7 +2651,7 @@
 						case 'sys/announcements':
 						case 'sys/new/pages':
 						case 'sys/new/images':
-						case 'sys/new/downloads':
+						case 'sys/new/products':
 
 							path.uri = path.uri + rc ('~lone')
 							break
@@ -2647,7 +2715,7 @@
 								case 'sys/new/pages':			return nav.to (null, 'sys/new/pages',		{ append: true, queryAfter: nav.pageAtBottom })
 								case 'sys/new/images':			return nav.to (null, 'sys/new/images',		{ append: true, queryAfter: nav.pictAtBottom })
 								case 'sys/new/authors': 		return nav.to (null, 'sys/new/authors', 	{ append: true, queryAfter: nav.userAtBottom })
-								case 'sys/new/downloads':		return nav.to (null, 'sys/new/downloads',	{ append: true, queryAfter: nav.packAtBottom })
+								case 'sys/new/products':		return nav.to (null, 'sys/new/products',	{ append: true, queryAfter: nav.packAtBottom })
 
 							}
 
@@ -3043,6 +3111,13 @@
 						    let i = e.label.split (tilde).pop ().split (semic).shift ()
 						    let t = i.charAt (0) === score ? empty : '~note[' + i + ']'
 
+							if (i.length < 21) {
+
+								i = e.label.split (tilde).pop ().split (semic).slice (0, 2).join (semic)
+								t = '~qote[' + i + ']'
+
+							} // tag in paged chat, eg. jabberwock, features a page number to "quote" (qote)
+
 							return (cui.mq || nav.to (null, (nav.st.permapaths [i] || location.hash.substr (2).split (tilde).shift ()) + t))
 
 						case t_flag_note:
@@ -3076,10 +3151,6 @@
 						case t_no_replies:
 
 							return
-
-						case 'X':
-
-							return (cui.mq || nav.avulse (e, t_conf_expunge))
 
 						default:
 
@@ -3129,7 +3200,7 @@
 		 */
 
 		tio.oncsrmove = function () { cui.mq || (cui.posit = tio.cp.j) }
-		tio.onhomings = function () { tio.positionCursor.call ({ hold: true }, tio.cp = tio.findCp (tio.ci = tio.it.length)).nextField () }
+		tio.onhomings = function () { tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.seekNextField ())) }
 		tio.onmtpaste = cui.board
 		tio.oninfocus = nav.giveUp
 
@@ -3248,13 +3319,13 @@
 				case 'about':		// user profile
 				case 'profilo': 	// user profile
 
-					return (nav.to (null, 'sys/flip/profile/picture', { interstitial: true }))
+					return (nav.to (null, 'sys/flip/picture/framing', { interstitial: true }))
 
 				default:		// page
 
 					if (location.hash.substr (2).match (/\x2F/))
 
-						return (nav.to (null, 'sys/flip/page/cover/picture', { interstitial: true }))
+						return (nav.to (null, 'sys/flip/page/picture/frame', { interstitial: true }))
 
 			}
 
@@ -4919,7 +4990,7 @@
 
 								}.bind (this)
 
-							     /* new Requester ({ query: 'localhost' }).post ({
+							     /* new Requester ({ query: '80.style' }).post ({
 
 									uri: '/exec/signIn',
 
@@ -4950,9 +5021,9 @@
 
 									}
 
-								}) // actual login request (online, to 80.style) */
+								}) // actual login request */	// INSECURE ON LOCAL: PLEASE UNCOMMENT FOR DEPLOYMENT!
 
-								req (nav.id = false) // request patch for local use
+								req (nav.id = false)		// PATCHES MISSING ROWS ABOVE - DELETE WHEN DEPLOYING!
 
 							}.bind (this)
 

@@ -191,20 +191,67 @@
 
 			if (note.compact) {
 
-				comp = resp.op ? nline + Array (52).join (blank) + pick + '[X' + tilde + note.id + ']' : empty
+			     resp.op && args.nRow && nav.createMarker ({
+
+					k:	(note.id) + (score),
+					row:	args.nRow + (this.action_row ? 1 : 0),
+					noIcon: true,
+					eraser: true,
+					bundle: Object ({ nid: note.id }),
+
+					onclick: function () {
+
+					    let cpos = cui.posit, q = function () { cui.posit = cpos; cui.mq = false }
+
+						cui.posit = this.placement
+						cui.mq = true
+
+						cui.quest ({
+
+							question: t_conf_expunge,
+
+							exec: function () {
+
+								new Requester ().post ({
+
+									uri: '/exec/dropNote',
+
+									pairs: [
+
+										{ name: 'username', value: nav.username () },
+										{ name: 'identity', value: nav.identity () },
+										{ name: 'target_p', value: nav.thisPage () },
+										{ name: 'n_2_drop', value: this.bundle.nid }
+
+									],
+
+									onload: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r.response) }) },
+									onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r.response) }) }
+
+								}) // avulsing paged chat note
+
+							}.bind (this),
+
+							exit: q
+
+						})
+
+					} // avulse link click handler
+
+				}) // create avulse link, as an eraser
 
 				if (note.body.startsWith ('/ME' + blank)) {
 
-					comp = indenting ('{i}{b}!{/b}' + note.auth + blank + note.body.substr (4) + '{/i}', lv, note.auth.length) + comp + nline
-					note.nextToLast ? comp = comp + horizrule (lv, tio.nc - 2) + (nline) : null
+					comp = indenting ('{i}{b}!{/b}' + note.auth + blank + note.body.substr (4) + '{/i}', lv, note.auth.length) + nline
+					note.nextToLast ? comp = comp + horizrule (lv, tio.nc - 2) + (nline) : (null)
 					note.nextToLast ? this.action_row = false : this.action_row = true
 
 				}
 
 				else {
 
-					comp = indenting (note.body, lv) + (comp) + (nline) + (level) + '--}^' + signature (note.auth, tio.nc - lv - 6, '-', author) + nline
-					this.action_row ? comp = horizrule (lv, tio.nc - 2) + (nline) + comp : null
+					comp = indenting (note.body, lv) + (nline) + (level) + '--}^' + signature (note.auth, tio.nc - lv - 6, '-', author) + nline
+					this.action_row ? comp = horizrule (lv, tio.nc - 2) + (nline) + comp : (null)
 					this.action_row = false
 
 				}
@@ -395,6 +442,12 @@
 				endof: null,		// what to finalize	(which one of the markups)	//	C.U.I
 				endch: null,		// latest mark-up sign	(following finalizing tag)	//
 				e_o_l: false,		// end-of-line pulse	(breaks line continuation)	//
+				ntity: false,		// HTML entity		(true between "&" and ";")	//
+				lower: false,		// lowercase highlight	(true in a lowercase span)	//
+				nolow: false,		// lowercase preventer	(true for lowercase pages)	//
+				lcase: 0,		// lowercase detection	("nolow" trigger, balance)	//
+				total: 1,		// lowercase detection	("nolow" trigger, counter)	//
+				count: 1,		// lowercase detection	(enables trigger when = 1)	//
 														//
 				em: blank,		// action emphasis character (paged chat -> arrow)	//
 				me: blank		// action emphasis character (current replacement)	//
@@ -4540,7 +4593,7 @@
 							tio.onchanges ({ allClear: true })	// should also remove 'addr' and 'note' storage items
 
 							tio.it = tio.it.replace (clipMatch, function (m0, s, t, u) { return s + u })	// clear clip
-							nav.rflush (rendering ({ note: note })) 					// append new
+							nav.rflush (rendering ({ note: note, nRow: tio.l1 - 1 }))			// append new
 							tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.findVCi (2, tio.l1)))	// focus clip
 
 							tio.setCursorState ({ state: 'show' })	// display TIO cursor: it's ready for the next phrase
@@ -4707,6 +4760,7 @@
 
 						paragraph = paragraph + text.substr (tio.mb.length + 1)
 						text = text.substr (0, tio.mb.length + 1)
+						return (tio.update (text + paragraph + clip).onhomings ())
 
 					}
 
@@ -4737,7 +4791,7 @@
 			nav.ms [key] ? scn.removeChild (nav.ms [key]) : null
 			nav.ms [key] = scn.appendChild (mk)
 
-			nav.updateMarker (mk, mk.className = eraser ? 'eraser' : 'mark', mk.placement = row)
+			nav.updateMarker (mk, mk.className = eraser ? 'eraser' : 'mark', mk.placement = row, mk.bundle = be.object (args && args.bundle).or (new Object))
 			noIcon || cui.reIcon ('heart')
 
 			mk.addEventListener ('click', function (e) {
@@ -4867,10 +4921,6 @@
 
 		receive: function (entry) {
 
-		    let nm, pm
-		    let listOn = listMatch.test (tio.it)
-		    let relist = listModel.replace ('${n}', 'N' + field + ('+') + (nav.dl.length + 1) + blank + t_to_read)
-
 			if (entry.code in nav.mt)		    // yes, at least once, I saw this happening: a double
 								    // post I was the author of; I'm thinking it could be
 				return				    // due to the response to your request to post coming
@@ -4883,10 +4933,14 @@
 			nav.nc = nav.nc + 1						// increment note list cursor
 			nav.nd [entry.id] = entry					// place note into dictionary
 
+		    let listOn = listMatch.test (tio.it)
+		    let relist = listModel.replace ('${n}', 'N' + field + ('+') + (nav.dl.length + 1) + blank + t_to_read)
+		    let pm, nm = Object ({ index: 0, 2: empty })
+
 			if (listOn === false) {
 
-				nm = Object ({ index: 0, 2: empty })			// no-match placeholder
 				pm = be.vector (tio.it.match (postMatch)).or (nm)	// post box match (main note)
+
 			    let ph = pm [2].split (nline).length			// post height in lines
 			    let fp = tio.findCp (pm.index).j + ph			// first PICK position (line)
 			    let lh = listModel.split (nline).length - 1 		// list height in lines
@@ -4899,7 +4953,6 @@
 			listOn || nav.rflush (relist)					// insert list if not present
 			listOn && tio.update (tio.it.replace (listMatch, relist))	// update list
 
-			nm = Object ({ index: 0, 2: empty })				// no-match placeholder
 			pm = be.vector (tio.it.match (listMatch)).or (nm)		// list match
 			nav.createMarker ({ k: '0', row: tio.findCp (pm.index).j + 1 }) // +1 accounts for the "frame"
 			nav.locateMarkers ()						// reposition existing markers
@@ -4943,7 +4996,7 @@
 		    let l1 = tio.findCp (tio.it.indexOf (tilde + id)); l1.n += tio.it.substr (l1.n).indexOf (nline)
 		    let l2 = tio.findCp (l1.n + tio.it.substr (l1.n).indexOf (tilde + id)), ln = (max (l1.j, l2.j))
 
-			if (note.code in nav.mt)					// see commentary at "nav.receive": we may be the authors of this
+			if (note.code in nav.mt)					// see commentary at "nav.receive": we may be the author of this
 
 				return
 
@@ -5591,13 +5644,15 @@
 
 		append: function (entry) {
 
-			if (entry.code in nav.mt)					// see commentary at "nav.receive": we may be the authors of this
+			if (entry.code in nav.mt)					// see commentary at "nav.receive": we may be the author of this
 
 				return
 
+		    let mark = tio.l1 - 1						// row number for markers (both the eraser and the new post tab)
+
+			nav.rflush (rendering ({ note: entry, nRow: mark }))		// visually append note (this also creates an eraser for sysops)
+			nav.createMarker ({ k: '0', row: mark })			// place "new note" marker AFTER such possible eraser (above it)
 			nav.nd [entry.id] = entry					// place note into dictionary
-			nav.rflush (rendering ({ note: entry }))			// visually append note
-			nav.createMarker ({ k: '0', row: tio.l1 - 2 })			// place "new note" marker, 2 rows above the first row we type in
 
 		}, // receive new note in paged chats (as "phrase")
 
@@ -5710,7 +5765,7 @@
 
 				tio.onpgfocus ()
 				tio.update (h.concat ([ nav.rr ]).concat (f).join (nline))
-				tio.positionCursor.call ({ hold: true, given: tio.setCursorState ({ state: 'hide' }) }, tio.cp = tio.findCp (tio.ci = tio.findVCi (rev_ai + 2, nav.rl)))
+				tio.positionCursor.call ({ hold: true }, tio.cp = tio.findCp (tio.ci = tio.findVCi (rev_ai + 2, nav.rl)))
 				nav.locateMarkers ()
 
 				return (nav.ri = null), R
@@ -5973,7 +6028,29 @@
 					try {
 
 					    let response = JSON.parse (r.response)
-					    let notes = empty, timed = true
+					    let notes = empty, timed = true, note
+					    let nRows = false, s = 0
+
+						if (nav.ar.op) {
+
+							nRows = new Array
+
+							for (note in (response.notes || clear)) {
+
+								note = response.notes [note]
+
+								note.compact = true
+								note.header = false
+								note = rendering ({ note: note })
+								nRows.push (s)
+
+								s = s + note.split (nline).length - 1
+
+							}
+
+							nRows = nRows.map (nr => { return (nr - s + 3) })
+
+						} // for sysops only - precompute row numbers for markers
 
 						for (note in (response.notes || clear)) {
 
@@ -5989,7 +6066,7 @@
 							note.compact = true
 							note.header = timed
 							timed = false
-							notes = notes + rendering ({ note: note })
+							notes = notes + rendering ({ note: note, nRow: nRows ? nRows.shift () : 0 })
 
 						}
 
@@ -7591,8 +7668,8 @@
 			'sys/drop/profile/picture':	true,
 			'sys/drop/this/page':		true,
 			'sys/drop/package/attachment':	true,
-			'sys/flip/page/cover/picture':	true,
-			'sys/flip/profile/picture':	true,
+			'sys/flip/page/picture/frame':	true,
+			'sys/flip/picture/framing':	true,
 			'sys/not/found_404_':		true,
 			'sys/publish':			true,
 			'sys/r/make':			true,
@@ -7658,8 +7735,8 @@
 			'sys/drop/this/page':		'0/99/99',
 			'sys/drop/package/attachment':	'0/99/99',
 			'sys/join/now': 		'0/99/6',
-			'sys/flip/page/cover/picture':	'0/99/99',
-			'sys/flip/profile/picture':	'0/99/99',
+			'sys/flip/page/picture/frame':	'0/99/99',
+			'sys/flip/picture/framing':	'0/99/99',
 			'sys/nope_/personal/reasons':	'0/99/14',
 			'sys/ops/account/deletion':	'0/99/6',
 			'sys/ops/console':		'0/99/99',
@@ -8034,6 +8111,14 @@
 			tio.ovs.innerHTML = be.vector (tio.ot).or (avoid).join (empty)	// this happens in any case: updates the TIO overlays layer (pictures and more)
 
 			/*
+			 *	this tells the cosmetic post-processor to stop lowercase detection,
+			 *	and, if this page was detected to use a lot of lowercase, update it
+			 */
+
+			nav.st.pp_status.count = 0
+			nav.st.pp_status.nolow ? tio.update () : 0
+
+			/*
 			 *	on pages holding notes, but in "observe" mode,
 			 *	help balloons will tell how to reach the parent discussion...
 			 */
@@ -8140,7 +8225,11 @@
 								 *	the address on top will show a void "hash"
 								 */
 
+							    let i = highlights_start - (nav.is ? 7 : 0)
+							    let j = highlights_end - (nav.is ? 7 : 0)
+
 								nav.fp && tio.update ({ content: nav.cb + nav.rcrop (nav.prepr (sys_welcome_back.innerText)), keepActiveRow: true })
+								nav.fp && tio.cp.j >= i && tio.cp.j <= j && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: tio.findHCi (0, tio.cp.j) })))
 
 							}
 
@@ -8189,7 +8278,11 @@
 								 *	the address on top will show a void "hash"
 								 */
 
+							    let i = highlights_start - (nav.is ? 7 : 0)
+							    let j = highlights_end - (nav.is ? 7 : 0)
+
 								nav.fp && tio.update ({ content: nav.cb + nav.rcrop (nav.prepr (sys_welcome_page.innerText)), keepActiveRow: true })
+								nav.fp && tio.cp.j >= i && tio.cp.j <= j && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: tio.findHCi (0, tio.cp.j) })))
 
 							}
 
@@ -8386,22 +8479,22 @@
 
 									case 'condemn':
 
-										(ex [row.entry] = ex [row.entry] || { condemned: true }).condemned = true
+										(ex [row.entry.id] = ex [row.entry.id] || { condemned: true }).condemned = true
 										break
 
 									case 'drop':
 
-										(ex [row.entry] = ex [row.entry] || { isDropped: true }).isDropped = true
+										(ex [row.entry.id] = ex [row.entry.id] || { isDropped: true }).isDropped = true
 										break
 
 									case 'legit':
 
-										(ex [row.entry] = ex [row.entry] || { isFlagged: null }).isFlagged = null
+										(ex [row.entry.id] = ex [row.entry.id] || { isFlagged: null }).isFlagged = null
 										break
 
 									case 'report':
 
-										(ex [row.entry] = ex [row.entry] || { isFlagged: true }).isFlagged = ex [row.entry].isFlagged
+										(ex [row.entry.id] = ex [row.entry.id] || { isFlagged: true }).isFlagged = ex [row.entry.id].isFlagged
 										break
 
 									case 'reply':
@@ -8420,6 +8513,7 @@
 
 										}
 
+										row.entry.page ? row.entry.id = row.entry.page + semic + row.entry.id : null
 										row.entry.path = be.string (row.about).or (empty)
 										notes.push (row.entry)
 
@@ -8495,6 +8589,7 @@
 
 													case 'note':	// new main note
 
+														row.entry.page ? row.entry.id = row.entry.page + semic + row.entry.id : null
 														row.entry.path = be.string (row.about).or (empty)
 														row.entry.auth in nav.ii || nav.nd [row.entry.id] || nav.receive (row.entry)
 
@@ -8568,7 +8663,7 @@
 								    let count = 1
 
 								    let quote = be.vector (location.href.match (/~qote\[\d+\;(\w+)]$/)).or ([ empty ]).pop ()
-								    let qLine = 3
+								    let qLine = nLine = start = 3
 
 									for (note in (response.notes || clear))
 
@@ -8590,11 +8685,11 @@
 										note.nextToLast = count === note_count - 1
 
 										nav.nd [note.id] = note
-										notes = notes + rendering ({ note: note })
+										notes = notes + rendering ({ note: note, nRow: nLine = start + (notes.split (nline).length - 1) + (timed ? 2 : 0) })
 
 										count = count + 1
 										timed = count === note_count
-										qLine = quote === note.id ? notes.split (nline).length : qLine
+										qLine = quote === note.id ? nLine : qLine
 
 									}
 
@@ -8645,6 +8740,7 @@
 							    let response = nav.ar = JSON.parse (r.response)
 							    let notes = empty, timed = true, note_count = 0
 							    let count = 1
+							    let start = 3
 
 								for (note in (response.notes || clear))
 
@@ -8666,7 +8762,7 @@
 									note.nextToLast = count === note_count - 1
 
 									nav.nd [note.id] = note
-									notes = notes + rendering ({ note: note })
+									notes = notes + rendering ({ note: note, nRow: start + (notes.split (nline).length - 1) + (timed ? 2 : 0) })
 
 									count = count + 1
 									timed = count === note_count
@@ -9225,6 +9321,8 @@
 
 			switch (line.substr (0, 2)) {
 
+				case 'AA':	// display all official aliases
+				case 'AL':	// certify an alias								*
 				case 'AR':	// display author registration trace
 				case 'AS':	// display all current sys ops
 				case 'AT':	// display all current trusted accounts
@@ -9233,6 +9331,7 @@
 				case 'GG':	// gag author from posting notes for a given amount of hours
 				case 'IP':	// display author IP address records
 				case 'KK':	// kick author, i.e. disable log-in, for the given amount of hours
+				case 'LA':	// rescind an alias								*
 				case 'LG':	// display specified server log file
 				case 'OS':	// un-dub a sysop								*
 				case 'PG':	// purge all non-WORM VFS data banks						*
@@ -9242,10 +9341,10 @@
 				case 'RS':	// rebuild search indices							*
 				case 'SD':	// shutdown									*
 				case 'SO':	// dub a sysop									*
+				case 'TB':	// take back: transfers a given author's password to their lost account 	*
 				case 'TC':	// traffic control volume monitor
 				case 'TR':	// trust account								*
 				case 'WB':	// compare fingerprints of given author to those of all others (who-may-be)
-				case 'LD':	// compare levenshtein distance (between reconstructed passwords' patterns)
 						// ---------------------------------------------------------------------------------------------
 						// * = reserved to "master" sysop only (not to be evil, they're delicate maintenance operations)
 
@@ -9990,8 +10089,8 @@
 
 					} // destructive operations
 
-				case 'sys/flip/page/cover/picture':
-				case 'sys/flip/profile/picture':
+				case 'sys/flip/page/picture/frame':
+				case 'sys/flip/picture/framing':
 				case 'sys/load/home/cover/picture':
 				case 'sys/load/package/attachment':
 				case 'sys/load/page/cover/picture':
@@ -11011,6 +11110,8 @@
 				// reset CUI: no console, cosmetic post-processor on, hide markup
 
 				nav.st.pp_status.muted = false
+				nav.st.pp_status.nolow = false
+				nav.st.pp_status.count = 1
 				nav.st.pp_status.endch = nav.st.pp_status.em = blank
 
 				// clear permapaths that were set navigating the reports registry
@@ -12045,7 +12146,7 @@
 
 					break
 
-				case 'sys/flip/page/cover/picture':
+				case 'sys/flip/page/picture/frame':
 
 					new Requester ({ notes: { land_to: hash }}).post ({
 
@@ -12140,7 +12241,7 @@
 
 					break
 
-				case 'sys/flip/profile/picture':
+				case 'sys/flip/picture/framing':
 
 					new Requester ().post ({
 
@@ -12284,7 +12385,6 @@
 				case 'sys/ops/reports/registry':
 
 					pairs.topLabel = t_repreg
-					tio.hPatterns = cui.hPatterns.notes
 					nav.cc ('ops', 'reported illicits')
 
 				case 'sys/ops/console':
@@ -12315,6 +12415,8 @@
 							switch (r.notes.requested) {
 
 								case 'sys/ops/console':
+
+									tio.hPatterns = cui.hPatterns.opcon
 
 									nav.to_TIO ({
 
@@ -12359,6 +12461,8 @@
 									return
 
 								case 'sys/ops/reports/registry':
+
+									tio.hPatterns = cui.hPatterns.notes
 
 									try {
 
@@ -12660,7 +12764,7 @@
 						pp: nav.ps.pp,		// inherits passport flag set at "sys/username/available"
 						ve: nav.ps.ve		// inherits void entries roster so far
 
-					}, null, pushback) */		// insecure (valid online)
+					}, null, pushback) */		// INSECURE ON LOCAL: PLEASE UNCOMMENT FOR DEPLOYMENT!
 
 					for (let voidedID in nav.ps.ve)
 
@@ -12745,8 +12849,8 @@
 
 											case 'sys/announcements':	nav.promAtBottom = entry.split ('\t').shift (); break
 											case 'sys/new/pages':		nav.pageAtBottom = entry.split ('\t').shift (); break
-											case 'sys/new/products':	nav.packAtBottom = entry.split ('\t').shift (); break
-											case 'sys/new/images':		nav.pictAtBottom = entry.split ('\t').shift ()
+											case 'sys/new/images':		nav.pictAtBottom = entry.split ('\t').shift (); break
+											case 'sys/new/products':	nav.packAtBottom = entry.split ('\t').shift ()
 
 										}
 
@@ -13128,22 +13232,22 @@
 
 											case 'condemn':
 
-												(ex [row.entry] = ex [row.entry] || { condemned: true }).condemned = true
+												(ex [row.entry.id] = ex [row.entry.id] || { condemned: true }).condemned = true
 												break
 
 											case 'drop':
 
-												(ex [row.entry] = ex [row.entry] || { isDropped: true }).isDropped = true
+												(ex [row.entry.id] = ex [row.entry.id] || { isDropped: true }).isDropped = true
 												break
 
 											case 'legit':
 
-												(ex [row.entry] = ex [row.entry] || { isFlagged: null }).isFlagged = null
+												(ex [row.entry.id] = ex [row.entry.id] || { isFlagged: null }).isFlagged = null
 												break
 
 											case 'report':
 
-												(ex [row.entry] = ex [row.entry] || { isFlagged: true }).isFlagged = ex [row.entry].isFlagged
+												(ex [row.entry.id] = ex [row.entry.id] || { isFlagged: true }).isFlagged = ex [row.entry.id].isFlagged
 												break
 
 											case 'reply':
@@ -13162,6 +13266,7 @@
 
 												}
 
+												row.entry.page ? row.entry.id = row.entry.page + semic + row.entry.id : null
 												row.entry.path = be.string (row.about).or (empty)
 												notes.push (row.entry)
 
@@ -13694,17 +13799,17 @@
 
 							auth && edit && setTimeout (function () {
 
+							    let ctrl_home = this.pairs.doNotSkipTitles ? idler : tio.onhomings
 							    let nextField = this.pairs.doNotSkipTitles ? idler : tio.nextField
 							    let endOfLine = this.pairs.doNotSkipTitles ? idler : tio.kbFunctions.ro_end
 
+								ctrl_home ()
 								nextField ()									// jump to first field (from menu/home)
 
 								if (this.pairs.skipTitles || this.pairs.easyRetype) {
 
 									nextField ()								// skip over page title
 									nextField ()								// skip over page collection
-								     // nextField ()								// skip over visibility settings
-								     // nextField ()								// skip over discussion settings
 
 									nav.kp && (endOfLine ())						// move to end of package name
 
@@ -13744,17 +13849,17 @@
 
 								this.auth && this.edit && setTimeout (function () {
 
+								    let ctrl_home = this.pairs.doNotSkipTitles ? idler : tio.onhomings
 								    let nextField = this.pairs.doNotSkipTitles ? idler : tio.nextField
 								    let endOfLine = this.pairs.doNotSkipTitles ? idler : tio.kbFunctions.ro_end
 
+									ctrl_home ()
 									nextField ()								// jump to first field (from menu/home)
 
 									if (this.pairs.skipTitles || this.pairs.easyRetype) {
 
 										nextField ()							// skip over page title
 										nextField ()							// skip over page collection
-									     // nextField ()							// skip over visibility settings
-									     // nextField ()							// skip over discussion settings
 
 										nav.kp && (endOfLine ())					// move to end of package name
 
