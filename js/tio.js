@@ -2359,6 +2359,24 @@
 
 			// functions in read-only mode (form-like input)
 
+			ro_selectAll: function () {
+
+				if (tio.pm)
+
+					return;
+
+				if (tio.writable ()) {
+
+				    let topOfText = tio.findCp (tio.findVCi (0x000000, tio.l1));
+				    let endOfText = tio.findCp (tio.findVCi (0xFFFFFF, tio.l2));
+
+					tio.positionCursor (topOfText, tio.cp = endOfText);
+					tio.ci = endOfText.n;
+
+				}
+
+			},
+
 			ro_ctrlHome: function () {
 
 				if (tio.pm)
@@ -2785,6 +2803,7 @@
 					Shortcut.add ('shift+end',		tio.kbFunctions.ro_shiftEnd);
 					Shortcut.add ('ctrl+home',		tio.kbFunctions.ro_ctrlHome);
 					Shortcut.add ('ctrl+end',		tio.kbFunctions.ro_ctrlEnd);
+					Shortcut.add ('ctrl+a', 		tio.kbFunctions.ro_selectAll);
 					Shortcut.add ('ctrl+arrowup',		tio.kbFunctions.ctrlUp);
 					Shortcut.add ('ctrl+arrowdown', 	tio.kbFunctions.ctrlDown);
 					Shortcut.add ('ctrl+pageup',		tio.kbFunctions.ctrlPageUp);
@@ -3358,7 +3377,7 @@
 			tio.l2 = -0xFFFFFF
 			tio.setInnerText (be.string (contents).or (tio.getInnerText ()))
 			tio.txt.innerHTML = tio.highlight (tio.it, true, behavior.keepActiveRow && tio.rr && tio.rr.link && tio.rr.line)
-			tio.positionCursor.call ({ hold: true }, tio.cp = tio.findCp (tio.ci = tio.findVCi (tio.cp.i, tio.cp.j)))
+		     // tio.positionCursor.call ({ hold: true }, tio.cp = tio.findCp (tio.ci = tio.findVCi (tio.cp.i, tio.cp.j)))		// probably not a good idea, here: defies selection and might be useless
 
 			return tio
 

@@ -4510,7 +4510,7 @@
 
 		allClear: function (sub) {
 
-		    let home_me = tio.l1 <= tio.cp.j && tio.cp.j <= tio.l2 + 1
+		    let home_me = tio.l1 <= tio.cp.j && tio.cp.j <= tio.l2 + 2
 
 			if (nav.jw)
 
@@ -8136,7 +8136,7 @@
 			 *	appears (because the server makes it so, that's why)
 			 */
 
-			isThread && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.it.length - 3 * tio.nc)).nextField ()
+			isThread && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: tio.it.length - 3 * tio.nc })))
 
 			/*
 			 *	auto-hide the TIO text cursor when it's left at its "home" position
@@ -8226,10 +8226,10 @@
 								 */
 
 							    let i = highlights_start - (nav.is ? 7 : 0)
-							    let j = highlights_end - (nav.is ? 7 : 0)
 
 								nav.fp && tio.update ({ content: nav.cb + nav.rcrop (nav.prepr (sys_welcome_back.innerText)), keepActiveRow: true })
-								nav.fp && tio.cp.j >= i && tio.cp.j <= j && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: tio.findHCi (0, tio.cp.j) })))
+								nav.fp && tio.cp.j == find_rowIndex && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.findVCi (find_colIndex, find_rowIndex)))
+								nav.fp && tio.cp.j >= i && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: tio.findHCi (0, tio.cp.j) })))
 
 							}
 
@@ -8279,10 +8279,10 @@
 								 */
 
 							    let i = highlights_start - (nav.is ? 7 : 0)
-							    let j = highlights_end - (nav.is ? 7 : 0)
 
 								nav.fp && tio.update ({ content: nav.cb + nav.rcrop (nav.prepr (sys_welcome_page.innerText)), keepActiveRow: true })
-								nav.fp && tio.cp.j >= i && tio.cp.j <= j && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: tio.findHCi (0, tio.cp.j) })))
+								nav.fp && tio.cp.j == find_rowIndex && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.findVCi (find_colIndex, find_rowIndex)))
+								nav.fp && tio.cp.j >= i && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: tio.findHCi (0, tio.cp.j) })))
 
 							}
 
