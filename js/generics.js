@@ -742,7 +742,7 @@
 
 							status: 	this.request.status,
 							response:	t_req_too_large,
-							text:		empty,
+							text:		String ('PAYLOAD TOO LARGE'),
 							xml:		null,
 							notes:		this.notes
 
@@ -765,7 +765,7 @@
 								404: 'NOT FOUND',
 								405: 'METHOD NOT ALLOWED',
 								406: 'NOT ACCEPTABLE',
-							     // 413: "PAYLOAD TOO LARGE",
+							     // 413: 'PAYLOAD TOO LARGE',
 								414: 'REQUEST URI TOO LONG',
 								415: 'UNSUPPORTED MEDIA TYPE',
 								418: "I'M A TEAPOT!",
@@ -775,7 +775,7 @@
 								501: 'NOT IMPLEMENTED',
 								503: 'SERVICE UNAVAILABLE'
 
-							} [this.request.status]).or (empty),
+							} [this.request.status]).or ('UNKNOWN SERVER STATUS CODE'),
 
 							xml:		null,
 							notes:		this.notes

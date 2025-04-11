@@ -384,13 +384,26 @@
 
 			return (tio.ro === false) || (tio.l1 <= n && n <= tio.l2) || (be.switch (args && args.or).or (false));
 
-		},
+		}, // check active clip
 
 		inactive: function (args) {
 
 		  const n = be.number (args && args.lineIndex).or (tio.cp.j);
 
 			return (tio.ro === false) || (tio.l3 <= n && n <= tio.l4);
+
+		}, // check inactive clip
+
+		/*
+		 *	returns true when moving the cursor vertically makes no sense,
+		 *	because we're not in an active text clip or the current active
+		 *	clip extends through only one row, or we're in one-line prompt
+		 *	mode (e.g. when using the ctrl-f shortcut to find text)
+		 */
+
+		justScroll: function () {
+
+			return (tio.writable () === false) || (tio.l1 === tio.l2) || (tio.pm)
 
 		},
 
@@ -2571,7 +2584,7 @@
 
 			ro_up: function () {
 
-				if (tio.writable () === false)
+				if (tio.justScroll ())
 
 					return tio.kbFunctions.ctrlUp.call ();
 
@@ -2587,7 +2600,7 @@
 
 			ro_down: function () {
 
-				if (tio.writable () === false || tio.pm === true)
+				if (tio.justScroll ())
 
 					return tio.kbFunctions.ctrlDown.call ();
 
@@ -2635,11 +2648,7 @@
 
 			ro_pageUp: function () {
 
-				if (tio.writable () === false || tio.pm === true)
-
-					return tio.kbFunctions.ctrlPageUp.call ();
-
-				if (tio.ci === tio.findVCi (tio.bi, tio.l1))
+				if (tio.justScroll ())
 
 					return tio.kbFunctions.ctrlPageUp.call ();
 
@@ -2650,11 +2659,7 @@
 
 			ro_pageDown: function () {
 
-				if (tio.writable () === false || tio.pm === true)
-
-					return tio.kbFunctions.ctrlPageDown.call ();
-
-				if (tio.ci === tio.findVCi (tio.bi, tio.l1))
+				if (tio.justScroll ())
 
 					return tio.kbFunctions.ctrlPageDown.call ();
 

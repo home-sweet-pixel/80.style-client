@@ -225,8 +225,8 @@
 
 									],
 
-									onload: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r.response) }) },
-									onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r.response) }) }
+									onload: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r) }) },
+									onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r) }) }
 
 								}) // avulsing paged chat note
 
@@ -4318,9 +4318,16 @@
 
 		}, // return user from home path, with server-side conventions
 
-		de_hint: function (response) {
+		de_hint: function (r) {
 
-			return (be.string (response || null).or ($('sys_no_response').innerText.replace (/^\s+|\s+$/g, empty)).split (';').shift ())
+		    let no_response = sys_no_response.innerText.replace (/^\s+|\s+$/g, empty)
+
+			r = be.object (r).or ({ response: no_response })
+
+			r.response = be.string (r.response).or (no_response)
+			r.response = r.response.startsWith ('<!DOCTYPE html>') ? be.string (r.text).or (no_response) : r.response
+
+			return (r.response.split (semic).shift ())
 
 		}, // remove identity hints (or whichever hint) from responses
 
@@ -4697,7 +4704,7 @@
 
 									posit: ln,
 									assert: cui.mq = true,
-									argument: nav.de_hint (r.response),
+									argument: nav.de_hint (r),
 									exit: q
 
 								})
@@ -5146,7 +5153,7 @@
 
 						posit: ln,
 						assert: cui.mq = true,
-						argument: nav.de_hint (r.response),
+						argument: nav.de_hint (r),
 						exit: q
 
 					})
@@ -5196,7 +5203,7 @@
 						],
 
 						onload: q,
-						onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r.response) }) }
+						onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r) }) }
 
 					}) // expunging page
 
@@ -5215,7 +5222,7 @@
 						],
 
 						onload: q,
-						onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r.response) }) }
+						onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r) }) }
 
 					}) // expunging note
 
@@ -5252,8 +5259,8 @@
 
 						],
 
-						onload: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r.response) }) },
-						onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r.response) }) }
+						onload: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r) }) },
+						onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r) }) }
 
 					}) // avulsing chat note
 
@@ -5296,7 +5303,7 @@
 						cui.posit = ln
 						cui.mq = true
 
-						cui.alert ({ exit: q, argument: nav.de_hint (r.response) })
+						cui.alert ({ exit: q, argument: nav.de_hint (r) })
 
 					},
 
@@ -5356,7 +5363,7 @@
 						],
 
 						onload: function (r) { cui.alert ({ exit: q, argument: t_report_conf }) },
-						onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r.response) }) }
+						onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r) }) }
 
 					})
 
@@ -5430,7 +5437,7 @@
 						],
 
 						onload: function (r) { cui.alert ({ exit: q, argument: t_condemn_conf }) },
-						onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r.response) }) }
+						onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r) }) }
 
 					})
 
@@ -5807,7 +5814,7 @@
 						],
 
 						onload: function (r) { cui.alert ({ exit: q, argument: t_report_conf }) },
-						onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r.response) }) }
+						onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r) }) }
 
 					})
 
@@ -5871,7 +5878,7 @@
 								],
 
 								onload: function (r) { cui.alert ({ posit: nav.fl, exit: x, argument: t_join_conf }) },
-								onwhoa: function (r) { cui.alert ({ posit: nav.fl, exit: q, argument: nav.de_hint (r.response) }) }
+								onwhoa: function (r) { cui.alert ({ posit: nav.fl, exit: q, argument: nav.de_hint (r) }) }
 
 							})
 
@@ -5941,7 +5948,7 @@
 								],
 
 								onload: function (r) { cui.alert ({ posit: nav.fl, exit: x, argument: t_severe_conf }) },
-								onwhoa: function (r) { cui.alert ({ posit: nav.fl, exit: q, argument: nav.de_hint (r.response) }) }
+								onwhoa: function (r) { cui.alert ({ posit: nav.fl, exit: q, argument: nav.de_hint (r) }) }
 
 							})
 
@@ -5986,7 +5993,7 @@
 						],
 
 						onload: function (r) { cui.alert ({ exit: q, argument: t_announce_conf }) },
-						onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r.response) }) }
+						onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r) }) }
 
 					})
 
@@ -6200,7 +6207,7 @@
 								nav.tp && tio.type ({
 
 									text: Array (57 - r.notes.meter).join ('X'), cps: 30, lim: 0,
-									oncompletion: function () { nav.to (null, 'sys/server/message', { path: whoa2, response: nav.de_hint (this.response) }) }.bind (r)
+									oncompletion: function () { nav.to (null, 'sys/server/message', { path: whoa2, response: nav.de_hint (this) }) }.bind (r)
 
 								})
 
@@ -7099,7 +7106,7 @@
 
 											onwhoa: function (r) {
 
-												cui.alert ({ set: cui.posit = 1, argument: nav.de_hint (r.response) })
+												cui.alert ({ set: cui.posit = 1, argument: nav.de_hint (r) })
 
 											},			// request failure
 
@@ -7200,7 +7207,7 @@
 
 				onwhoa: function (r) {
 
-					cui.alert ({ consider: instance.freeze = false, set: cui.posit = 1, argument: nav.de_hint (r.response) })
+					cui.alert ({ consider: instance.freeze = false, set: cui.posit = 1, argument: nav.de_hint (r) })
 
 				}, // onwhoa (/exec/submitModel)
 
@@ -8085,7 +8092,78 @@
 			Shortcut.remove ('arrowleft')
 			Shortcut.remove ('arrowright')
 
-		},
+		}, // slideshow (nav.ss)
+
+		mr: function (r) {
+
+			if (this.error)
+
+				r = { highlights: [ block + nav.de_hint (r) ] }
+
+			else
+
+				try { r = JSON.parse (r.response) } catch (e) { return }
+
+			nav.cs.announcements = be.number (r.announcements).or (0)
+			nav.cs.reps = be.number (r.reps).or (0)
+			nav.cs.pages = be.number (r.pages).or (0)
+			nav.cs.images = be.number (r.images).or (0)
+			nav.cs.authors = be.number (r.authors).or (0)
+			nav.cs.products = be.number (r.products).or (0)
+			nav.cs.longtalks = be.number (r.longtalks).or (0)
+			nav.cs.chiacchere = be.number (r.chiacchere).or (0)
+			nav.cs.jabberwocks = be.number (r.jabberwocks).or (0)
+			nav.cs.mascellodons = be.number (r.mascellodons).or (0)
+			nav.cs.notifications = be.number (r.notifications).or (0)
+			nav.cs.annunciamocene = be.number (r.annunciamocene).or (0)
+
+			nav.cs.clear_news = be.number (lang === 'it' ? nav.cs.annunciamocene : nav.cs.announcements).or (0) ? true : false
+			nav.cs.highlights = be.vector (r.highlights).or (new Array)
+
+			/*
+			 *	if there's reported content (cs.reps),
+			 *	warn operators, via balloon help: reps' counter
+			 *	is incremented, server-side, only for operators
+			 */
+
+			switch (this.resource) {
+
+				case 'sys/welcome/page':
+
+					this.resource = 'sys_welcome_page'
+					break
+
+				case 'sys/welcome/back':
+
+					if (nav.id) {
+
+						nav.hb = be.string (r.home_areal_code).or (null)
+						nav.cs.reps && cui.say (cui.ball.flags.replace ('%F', nav.cs.reps.toString ()), 'sys/ops/reports/registry')
+
+					}
+
+					this.resource = 'sys_welcome_back'
+
+			}
+
+			/*
+			 *	this request may complete asynchronously, after
+			 *	the welcome page was abandoned already, so we'd
+			 *	better check that what's on the screen reflects
+			 *	the welcome page, before "updating" it with our
+			 *	new informations, starting from the template of
+			 *	the welcome page: if we're on the welcome page,
+			 *	the address on top will show a void "hash"
+			 */
+
+		    let i = highlights_start - (nav.is ? 7 : 0)
+		    let q = nav.grab ('SEARCH')
+
+			nav.fp && tio.update ({ content: nav.cb + nav.rcrop (nav.prepr ($(this.resource).innerText)), keepActiveRow: true })
+			nav.fp && tio.cp.j >= i && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: tio.findHCi (0, tio.cp.j) })))
+			nav.fp && tio.cp.j == find_rowIndex && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.findVCi (find_colIndex, find_rowIndex))).putKey.call ({ key: q })
+
+		}, // mailcheck responses handler, bound to either version of the welcome page
 
 		/*
 		 *	accessory post-page-load chores:
@@ -8186,52 +8264,8 @@
 
 							],
 
-							onload: function (r) {
-
-								try { r = JSON.parse (r.response) } catch (e) { return }
-
-								nav.cs.announcements = be.number (r.announcements).or (0)
-								nav.cs.reps = be.number (r.reps).or (0)
-								nav.cs.pages = be.number (r.pages).or (0)
-								nav.cs.images = be.number (r.images).or (0)
-								nav.cs.authors = be.number (r.authors).or (0)
-								nav.cs.products = be.number (r.products).or (0)
-								nav.cs.longtalks = be.number (r.longtalks).or (0)
-								nav.cs.chiacchere = be.number (r.chiacchere).or (0)
-								nav.cs.jabberwocks = be.number (r.jabberwocks).or (0)
-								nav.cs.mascellodons = be.number (r.mascellodons).or (0)
-								nav.cs.notifications = be.number (r.notifications).or (0)
-								nav.cs.annunciamocene = be.number (r.annunciamocene).or (0)
-
-								nav.cs.clear_news = be.number (lang === 'it' ? nav.cs.annunciamocene : nav.cs.announcements).or (0) ? true : false
-								nav.cs.highlights = be.vector (r.highlights).or (new Array)
-
-								nav.hb = be.string (r.home_areal_code).or (null)
-
-								/*
-								 *	if there's reported content,
-								 *	warn operators, via balloon help
-								 */
-
-								nav.cs.reps && cui.say (cui.ball.flags.replace ('%F', nav.cs.reps.toString ()), 'sys/ops/reports/registry')
-
-								/*
-								 *	this request may complete asynchronously, after
-								 *	the welcome page was abandoned already, so we'd
-								 *	better check that what's on the screen reflects
-								 *	the welcome page, before "updating" it with our
-								 *	new informations, starting from the template of
-								 *	the welcome page: if we're on the welcome page,
-								 *	the address on top will show a void "hash"
-								 */
-
-							    let i = highlights_start - (nav.is ? 7 : 0)
-
-								nav.fp && tio.update ({ content: nav.cb + nav.rcrop (nav.prepr (sys_welcome_back.innerText)), keepActiveRow: true })
-								nav.fp && tio.cp.j == find_rowIndex && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.findVCi (find_colIndex, find_rowIndex)))
-								nav.fp && tio.cp.j >= i && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: tio.findHCi (0, tio.cp.j) })))
-
-							}
+							onload: nav.mr.bind ({ resource: resource }),
+							onwhoa: nav.mr.bind ({ resource: resource, error: true })
 
 						})
 
@@ -8248,43 +8282,8 @@
 
 							uri: '/exec/highlights',
 
-							onload: function (r) {
-
-								try { r = JSON.parse (r.response) } catch (e) { return }
-
-								nav.cs.announcements = 0
-								nav.cs.reps = 0
-								nav.cs.pages = 0
-								nav.cs.images = 0
-								nav.cs.authors = 0
-								nav.cs.products = 0
-								nav.cs.longtalks = 0
-								nav.cs.chiacchere = 0
-								nav.cs.jabberwocks = 0
-								nav.cs.mascellodons = 0
-								nav.cs.notifications = 0
-								nav.cs.annunciamocene = 0
-
-								nav.cs.clear_news = false
-								nav.cs.highlights = be.vector (r.highlights).or (new Array)
-
-								/*
-								 *	this request may complete asynchronously, after
-								 *	the welcome page was abandoned already, so we'd
-								 *	better check that what's on the screen reflects
-								 *	the welcome page, before "updating" it with our
-								 *	new informations, starting from the template of
-								 *	the welcome page: if we're on the welcome page,
-								 *	the address on top will show a void "hash"
-								 */
-
-							    let i = highlights_start - (nav.is ? 7 : 0)
-
-								nav.fp && tio.update ({ content: nav.cb + nav.rcrop (nav.prepr (sys_welcome_page.innerText)), keepActiveRow: true })
-								nav.fp && tio.cp.j == find_rowIndex && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.findVCi (find_colIndex, find_rowIndex)))
-								nav.fp && tio.cp.j >= i && tio.positionCursor (tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: tio.findHCi (0, tio.cp.j) })))
-
-							}
+							onload: nav.mr.bind ({ resource: resource }),
+							onwhoa: nav.mr.bind ({ resource: resource, error: true })
 
 						})
 
@@ -8630,7 +8629,18 @@
 
 							}) // remove mail flag
 
-						} // request completion
+						}, // request completion
+
+						onwhoa: function (r) {
+
+						    let status = block + reframing ((r && r.status || t_no_response).toString (), tio.nc - 4, equal, aster)
+						    let notice = block + reframing (be.string (r && r.text).or ('?').toString (), tio.nc - 4, minus, aster)
+
+							tio.update (tio.it + nline)
+							tio.update (tio.it + nline + status)
+							tio.update (tio.it + nline + notice)
+
+						}
 
 					}) // news feed request
 
@@ -9030,7 +9040,7 @@
 													],
 
 													onload: nav.to.bind ({ runner: q, destination: 'sys/announcements' }),
-													onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r.response) }) }
+													onwhoa: function (r) { cui.alert ({ exit: q, argument: nav.de_hint (r) }) }
 
 												})
 
@@ -10186,6 +10196,24 @@
 
 					return (false)
 
+				case 'sys/ops/console':
+
+					/*
+					 *	using the sysops console inside "The Array" can be done, in theory;
+					 *	in practice, however, it currently leaves the UI in an inconsistent
+					 *	state, which I'm not sure how to solve, or at least takes effort to
+					 *	investigate: when clicking outside the TIO screen, TIO highlighters
+					 *	remain set to the subset used in the console (that's prolly easy to
+					 *	solve); when typing "exit" to quit the console, the menu becomes no
+					 *	longer functional because the TIO cursor is misplaced; so, you know
+					 *	what? for the moment, I'd just disable navigating to the op console
+					 *	URL while in "The Array" (when nav.is is true)
+					 */
+
+					if (nav.is)
+
+						return (false)
+
 			} // transparent actions
 
 			/*
@@ -11258,7 +11286,6 @@
 
 						if (tio.keyboardHooked === false) {
 
-							nav.array.pd || nav.array.togglePanels.call ()
 							document.onkeydown = null
 							tio.connectKeyboard (true)
 
@@ -11705,7 +11732,7 @@
 
 							}
 
-							nav.to (null, 'sys/server/message', { path: 'sys/login/failure', response: nav.de_hint (r.response) })
+							nav.to (null, 'sys/server/message', { path: 'sys/login/failure', response: nav.de_hint (r) })
 
 						}.bind ({ username: username, password: password }),
 
@@ -11781,8 +11808,8 @@
 
 						],
 
-						onwhoa: function (r) { nav.to (null, 'sys/server/message', { response: nav.de_hint (r.response), path: 'sys/sign/out/error' }) },
-						onload: function (r) { nav.to (null, 'sys/sign/out/confirm', { whence: nav.id = false, and: [ nav.ig = empty, nav.il = avoid, nav.ii = clear ] }) }
+						onwhoa: function (r) { nav.to (null, 'sys/server/message', { response: nav.de_hint (r), path: 'sys/sign/out/error' }) },
+						onload: function (r) { nav.to (null, 'sys/sign/out/confirm', { thereby: nav.id = false, and: [ nav.ig = empty, nav.il = avoid, nav.ii = clear ] }) }
 
 					})
 
@@ -11803,7 +11830,7 @@
 
 						],
 
-						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/password/change/error', response: nav.de_hint (r.response) }) },
+						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/password/change/error', response: nav.de_hint (r) }) },
 						onload: function (r) { nav.to (null, 'sys/password/changed', { path: 'sys/ok/password/changed', username: tb (nav.username ()), password: tb (r.notes.new_pass) }) }
 
 					})
@@ -11838,7 +11865,7 @@
 
 						],
 
-						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/areal/selection/error', response: nav.de_hint (r.response) }) },
+						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/areal/selection/error', response: nav.de_hint (r) }) },
 						onload: function (r) { nav.to (null, 'sys/homebase/changed', { path: 'sys/ok/homebase/changed', homebase: r.notes.areacode, and: nav.hb = r.notes.homebase }) }
 
 					})
@@ -11861,7 +11888,7 @@
 
 						],
 
-						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/account/delete/error', response: nav.de_hint (r.response) }) },
+						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/account/delete/error', response: nav.de_hint (r) }) },
 						onload: function (r) { nav.to (null, 'sys/account/erased', { path: 'sys/user/account/deleted', there_by: nav.id = nav.username () !== r.notes.username }) }
 
 					}) // when an account is successfully deleted, the user's login status is cleared only if this was the same user that's been deleted (other cases are by sysop request)
@@ -11894,7 +11921,7 @@
 						],
 
 						onload: function (r) { nav.to (null, '' + this.pp, { interstitial: true, where: localStorage.removeItem (this.pp) }) }.bind ({ pp: hash }),
-						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/trouble/with/heading', response: nav.de_hint (r.response), reentry: true }) }
+						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/trouble/with/heading', response: nav.de_hint (r), reentry: true }) }
 
 					}) // note: the homepage field is held following an empty key
 
@@ -11915,7 +11942,7 @@
 						],
 
 						onload: function (r) { nav.to (null, null, { interstitial: true }) },
-						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/cannot/drop/home/cover', response: nav.de_hint (r.response) }) }
+						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/cannot/drop/home/cover', response: nav.de_hint (r) }) }
 
 					}) // note: the corresponding load operation is on file input
 
@@ -11944,7 +11971,7 @@
 						],
 
 						onload: function (r) { nav.to (null, 'sys/write/new/page', { response: r.response, collection: r.notes.collection }) },
-						onwhoa: function (r) { nav.to (null, 'sys/server/message', { response: nav.de_hint (r.response), path: 'sys/cannot/type' }) }
+						onwhoa: function (r) { nav.to (null, 'sys/server/message', { response: nav.de_hint (r), path: 'sys/cannot/type' }) }
 
 					}) // note: the request gets collection titles (autocomplete)
 
@@ -12110,7 +12137,7 @@
 
 						],
 
-						onwhoa: function (r) { nav.to (0, 'sys/server/message', { path: 'sys/page/operation/error', response: nav.de_hint (r.response), reentry: true }) },
+						onwhoa: function (r) { nav.to (0, 'sys/server/message', { path: 'sys/page/operation/error', response: nav.de_hint (r), reentry: true }) },
 						onload: function (r) { nav.to (0, `${r.notes.landing}`, { also: 'WIPEOUT' == r.notes.mnvr ? nav.ps.ve [r.notes.i] = 1 : (null), as: localStorage.removeItem (r.notes.k) }) }
 
 					}) // yy-yeh... that was a little convoluted, lots of cases
@@ -12132,7 +12159,7 @@
 						],
 
 						onload: function (r) { nav.to (null, null, { interstitial: true }) },
-						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/cannot/drop/cover/picture', response: nav.de_hint (r.response) }) }
+						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/cannot/drop/cover/picture', response: nav.de_hint (r) }) }
 
 					}) // note: the corresponding load operation is on file input
 
@@ -12153,7 +12180,7 @@
 						],
 
 						onload: function (r) { nav.to (null, null, { interstitial: true }) },
-						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/cannot/drop/package', response: nav.de_hint (r.response) }) }
+						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/cannot/drop/package', response: nav.de_hint (r) }) }
 
 					}) // note: the corresponding load operation is on file input
 
@@ -12174,7 +12201,7 @@
 						],
 
 						onload: function (r) { nav.to (null, '' + r.notes.land_to, { instant: true, interstitial: true }) },
-						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/error/flipping/picture/frame', response: nav.de_hint (r.response) }) }
+						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/error/flipping/picture/frame', response: nav.de_hint (r) }) }
 
 					})
 
@@ -12248,7 +12275,7 @@
 						],
 
 						onload: function (r) { nav.to (null, '' + this.pp, { interstitial: true, where: localStorage.removeItem (this.pp) }) }.bind ({ pp: hash }),
-						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/error/saving/profile', response: nav.de_hint (r.response), reentry: true }) }
+						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/error/saving/profile', response: nav.de_hint (r), reentry: true }) }
 
 					})
 
@@ -12269,7 +12296,7 @@
 						],
 
 						onload: function (r) { nav.to (null, null, { instant: true, interstitial: true }) },
-						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/error/flipping/picture/frame', response: nav.de_hint (r.response) }) }
+						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/error/flipping/picture/frame', response: nav.de_hint (r) }) }
 
 					})
 
@@ -12290,7 +12317,7 @@
 						],
 
 						onload: function (r) { nav.to (null, null, { interstitial: true }) },
-						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/error/dropping/profile/picture', response: nav.de_hint (r.response) }) }
+						onwhoa: function (r) { nav.to (null, 'sys/server/message', { path: 'sys/error/dropping/profile/picture', response: nav.de_hint (r) }) }
 
 					}) // note: the corresponding load operation is on file input
 
@@ -12378,7 +12405,7 @@
 						onwhoa: function (r) {
 
 							nav.ps.ve [nav.ps.id] = nav.ps.ve [nav.ps.id - 1] = 1
-							nav.to (null, 'sys/server/message', { path: 'sys/rita', response: nav.de_hint (r.response) })
+							nav.to (null, 'sys/server/message', { path: 'sys/rita', response: nav.de_hint (r) })
 
 						}
 
@@ -12573,7 +12600,7 @@
 						onwhoa: function (r) {
 
 							nav.ps.ve [nav.ps.id] = nav.ps.ve [nav.ps.id - 1] = 1
-							nav.to (null, 'sys/server/message', { path: 'sys/ops/failed/authentication', response: nav.de_hint (r.response) })
+							nav.to (null, 'sys/server/message', { path: 'sys/ops/failed/authentication', response: nav.de_hint (r) })
 
 						}
 
@@ -12848,6 +12875,7 @@
 
 								onload: function (r) {
 
+								    let end = tio.findCp (tio.it.length)
 								    let table = r.response.split (nline)
 								    let final = r.response.split (nline)
 								    let stops = 7, lMargin = 5, Enum = 0, scrap = 0
@@ -12927,8 +12955,7 @@
 
 									if (this.from) {
 
-									    let end = tio.findCp (tio.ci = 100E7)
-
+										tio.ci = end.n
 										tio.positionCursor (tio.cp = end)
 
 										tio.type ({
@@ -12937,8 +12964,7 @@
 
 											oncompletion: function () {
 
-												tio.ci = tio.findVCi (end.i, end.j)
-												tio.positionCursor.call ({ hold: true }, tio.cp = end).nextField ()
+												tio.positionCursor.call ({ hold: true }, tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: end.n })))
 												nav.extras ({ resource: this.resource })
 
 											}.bind (this),
@@ -12988,7 +13014,7 @@
 
 								}),
 
-								onwhoa: function (r) { nav.to (null, 'sys/server/message', { response: nav.de_hint (r.response) }) }
+								onwhoa: function (r) { nav.to (null, 'sys/server/message', { response: nav.de_hint (r) }) }
 
 							}) // actual request for new entries' lists
 
@@ -13018,7 +13044,8 @@
 
 								onload: function (r) {
 
-								    let notes = empty, response, note, end
+								    let end = tio.findCp (tio.it.length)
+								    let notes = empty, response, note
 
 									try { response = JSON.parse (r.response) }
 
@@ -13060,7 +13087,7 @@
 
 										notes = notes + 'N' + field + blank + t_more_notes
 
-									end = tio.findCp (tio.ci = 100E7)
+									tio.ci = end.n
 									tio.positionCursor (tio.cp = end)
 
 									tio.type ({
@@ -13069,8 +13096,7 @@
 
 										oncompletion: function () {
 
-											tio.ci = tio.findVCi (end.i, end.j)
-											tio.positionCursor.call ({ hold: true }, tio.cp = end).nextField ()
+											tio.positionCursor.call ({ hold: true }, tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: end.n })))
 
 										},
 
@@ -13081,7 +13107,7 @@
 
 								},
 
-								onwhoa: function (r) { cui.alert ({ argument: nav.de_hint (r.response) }) }
+								onwhoa: function (r) { cui.alert ({ argument: nav.de_hint (r) }) }
 
 							})
 
@@ -13102,6 +13128,8 @@
 								],
 
 								onload: function (r) {
+
+								    let end = tio.findCp (tio.it.length)
 
 									try {
 
@@ -13169,7 +13197,7 @@
 									r.response.more || (r.response.text += block + t_end_of_flags)
 									r.response.more && (r.response.text += block + '-\nN' + field + t_more_flags)
 
-									end = tio.findCp (tio.ci = 100E7)
+									tio.ci = end.n
 									tio.positionCursor (tio.cp = end)
 
 									tio.type ({
@@ -13178,8 +13206,7 @@
 
 										oncompletion: function () {
 
-											tio.ci = tio.findVCi (end.i, end.j)
-											tio.positionCursor.call ({ hold: true }, tio.cp = end).nextField ()
+											tio.positionCursor.call ({ hold: true }, tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: end.n })))
 
 										},
 
@@ -13190,7 +13217,7 @@
 
 								},
 
-								onwhoa: function (r) { cui.alert ({ argument: nav.de_hint (r.response) }) }
+								onwhoa: function (r) { cui.alert ({ argument: nav.de_hint (r) }) }
 
 							})
 
@@ -13215,6 +13242,7 @@
 
 								onload: function (r) {
 
+								    let end = tio.findCp (tio.it.length)
 								    let my_username = nav.username ()
 								    let notes = new Array
 								    let list = empty
@@ -13306,7 +13334,7 @@
 
 										return cui.alert ({ argument: t_no_more_news })
 
-									end = tio.findCp (tio.ci = 100E7)
+									tio.ci = end.n
 									tio.positionCursor (tio.cp = end)
 
 									tio.type ({
@@ -13315,8 +13343,7 @@
 
 										oncompletion: function () {
 
-											tio.ci = tio.findVCi (end.i, end.j)
-											tio.positionCursor.call ({ hold: true }, tio.cp = end).nextField ()
+											tio.positionCursor.call ({ hold: true }, tio.cp = tio.findCp (tio.ci = tio.seekNextField ({ pos: end.n })))
 
 										},
 
@@ -13327,7 +13354,7 @@
 
 								},
 
-								onwhoa: function (r) { cui.alert ({ argument: nav.de_hint (r.response) }) }
+								onwhoa: function (r) { cui.alert ({ argument: nav.de_hint (r) }) }
 
 							})
 
@@ -13940,9 +13967,9 @@
 						onwhoa: function (r) {
 
 							r.status === 404 && nav.to (null, 'sys/not/found_404_', { tried: true, path: r.notes.path, ref: r.notes.ref })
-							r.status === 404 || nav.to (null, 'sys/server/message', { tried: true, path: r.notes.path, ref: r.notes.ref, response: nav.de_hint (r.response) })
+							r.status === 404 || nav.to (null, 'sys/server/message', { tried: true, path: r.notes.path, ref: r.notes.ref, response: nav.de_hint (r) })
 
-						}, // this is where such resource was "tried", but not "found"
+						}, // this is where such resource was "tried", but not "found" or some other problem arised
 
 						onload: function (r) {
 

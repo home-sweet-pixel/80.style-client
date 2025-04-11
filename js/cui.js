@@ -308,7 +308,7 @@
 
 		/*
 		 *	search call on enter,
-		 *
+		 *	but will do tab+enter when setting home areal or quicktripping
 		 */
 
 		findr: function (context) {
@@ -4886,7 +4886,9 @@
 		Shortcut.any = function (e) {
 
 			tio.stopTyping ()
-			nav.is || e.key === 'F11' || tio.setCursorState ({ state: 'show' })
+
+			nav.is || e.key === 'F11' ||	tio.setCursorState ({ state: 'show' })	// unless in The Array
+			nav.is && tio.keyboardHooked && tio.setCursorState ({ state: 'show' })	// but, even then, unless we're browsing the site from inside The Array (tio.keyboardHooked tells us that)
 
 		}
 
