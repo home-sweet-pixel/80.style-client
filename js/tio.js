@@ -1348,7 +1348,7 @@
 
 			}
 
-			k = tio.kl === 0 ? this.key : this.key.toUpperCase ();
+			k = tio.kl - 1 || this.typed ? this.key : this.key.toUpperCase ();
 			t = tio.getInnerText ();
 
 			if (tio.noLineOverflow === false || k === nline) {

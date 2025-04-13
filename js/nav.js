@@ -4817,7 +4817,7 @@
 				e.preventDefault ()
 				e.cancelBubble = true
 
-				setTimeout (function () {
+				this.className === 'eraser' || setTimeout (function () {
 
 					nav.removeMarker (key)
 					cui.reIcon (null)

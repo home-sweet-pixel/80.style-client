@@ -1061,7 +1061,11 @@
 
 	div#scn div.eraser {
 
-		background-color: red
+		background-color: red;
+		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGMAAABjCAMAAAC45U6nAAABDlBMVEVHcEz///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9NLldiAAAAWXRSTlMA/r062lj5o+Qqet5rE3cVFG/b4mX1dOD0Fl0FfupZAWiSD4AIEfwECQ7XW2DmEl/vDHgLfGJxQoQDshccg2luG4Lpym2wTi/4hu1h5+Hr8Nb6Wn3uEGds3f/1sYYAAAGjSURBVHhe7da3duNADIZRyCZliyKpmHPwKmfnnOPmvHj/F1kVOguy0BRDolp8LYtb8Jz5AXpJkiRJkiRJUlINnEPwtptKInZ5GpyIGuOFgtjNPAQnENFqbCYQsVUKTmDBVBH4YgcnEOfVxGYC8a5zo00cR3Fd8VBBrLpN6BoR/NefXz8VBHaTusahgdSRgsBH0C6F1LC+mdgB/RL5OFLVRZgEVa6R8ekbCwHt5VdCPrpOmARlppGyWQiAPBERo7zHQcDATiNlVcIkqGyUjLjJQkDpoEZILVyCMuOEMBFQsdgIaq9sRLgIyuYnwHnvI86Ao4TPeOIgYhmfMcxPQwZoL6gUP4HGqMdGUAd9dgIzdSZiZ07IxCqxEL7RijRZCGi4HsPI7jMQAPtj79vlNhiIVc2ud7RYCEhaE0Jyy3dhElT9AyE/ZiwE9L8jlU4ltYlnxXnQG31B6miga+S8hPLgzmn/kteCgoDpb/p8D9p11MM6+7wmtkC/i5M3BQFOtUiEfldFIjbcXUEJcFoqAsAlQr/KtYqAdpaI/zFJkiRJkiRJ+gv+shbUXVf5iwAAAABJRU5ErkJggg==');
+		background-position: center center;
+		background-repeat: no-repeat;
+		background-size: auto 100%
 
 	} /* TIO -> NAV erasers */
 
@@ -1898,12 +1902,12 @@
 
 	}
 
-	div#hdl.NBL { background-color: #292929; background-image: url(/2d/jpg/page-l-l.jpg) }
-	div#hdr.NBL { background-color: #484848; background-image: url(/2d/jpg/page-l-r.jpg); background-position: top left }
-	div#hdl.NBT { background-color: #2E2E2E; background-image: url(/2d/jpg/page-t-l.jpg) }
-	div#hdr.NBT { background-color: #575757; background-image: url(/2d/jpg/page-t-r.jpg); background-position: top left }
-	div#hdl.NBR { background-color: #242424; background-image: url(/2d/jpg/page-r-l.jpg) }
-	div#hdr.NBR { background-color: #484848; background-image: url(/2d/jpg/page-r-r.jpg); background-position: top left }
+	div#hdl.NBL { background-color: #292929; background-image: url(2d/jpg/page-l-l.jpg) }
+	div#hdr.NBL { background-color: #484848; background-image: url(2d/jpg/page-l-r.jpg); background-position: top left }
+	div#hdl.NBT { background-color: #2E2E2E; background-image: url(2d/jpg/page-t-l.jpg) }
+	div#hdr.NBT { background-color: #575757; background-image: url(2d/jpg/page-t-r.jpg); background-position: top left }
+	div#hdl.NBR { background-color: #242424; background-image: url(2d/jpg/page-r-l.jpg) }
+	div#hdr.NBR { background-color: #484848; background-image: url(2d/jpg/page-r-r.jpg); background-position: top left }
 
 	div#hdl.NBL {
 
@@ -1932,9 +1936,9 @@
 	div#hdl.NBL div#back, div#hdl.NBT div#back, div#hdl.NBR div#back { background-position: 1.5vw center }
 	div#hdr.NBL div#forw, div#hdr.NBT div#forw, div#hdr.NBR div#forw { background-position: 1.5vw center }
 
-	div#scn.NBL, div#scn.NBL-L, div#pag.NBL, div#pag.NBL-L, div#txt.NBL, div#txt.NBL-L { background-color: #C8C8C8; background-image: url(/2d/jpg/page-l-m.jpg); background-size: auto 120px; background-position: 0 0 }
-	div#scn.NBT, div#scn.NBT-L, div#pag.NBT, div#pag.NBT-L, div#txt.NBL, div#txt.NBL-L { background-color: #E2E2E2; background-image: url(/2d/jpg/page-t-m.jpg); background-size: auto 120px; background-position: 0 0 }
-	div#scn.NBR, div#scn.NBR-L, div#pag.NBR, div#pag.NBR-L, div#txt.NBL, div#txt.NBL-L { background-color: #D6D6D6; background-image: url(/2d/jpg/page-r-m.jpg); background-size: auto 120px; background-position: 0 0 }
+	div#scn.NBL, div#scn.NBL-L, div#pag.NBL, div#pag.NBL-L, div#txt.NBL, div#txt.NBL-L { background-color: #C8C8C8; background-image: url(2d/jpg/page-l-m.jpg); background-size: auto 120px; background-position: 0 0 }
+	div#scn.NBT, div#scn.NBT-L, div#pag.NBT, div#pag.NBT-L, div#txt.NBL, div#txt.NBL-L { background-color: #E2E2E2; background-image: url(2d/jpg/page-t-m.jpg); background-size: auto 120px; background-position: 0 0 }
+	div#scn.NBR, div#scn.NBR-L, div#pag.NBR, div#pag.NBR-L, div#txt.NBL, div#txt.NBL-L { background-color: #D6D6D6; background-image: url(2d/jpg/page-r-m.jpg); background-size: auto 120px; background-position: 0 0 }
 
 	div#hdl.NBL,
 	div#hdl.NBT,
@@ -2206,7 +2210,7 @@
 	div#ovs.T3C, div#clc.T3C { background: none }
 
 	div#scn.T3C div.mark, div#scn.T3C div.markUp, div#scn.T3C div.markDown { opacity: 1; background-color: #FFF }
-	div#scn.T3C div.eraser { opacity: 1; background-color: #FFF }
+	div#scn.T3C div.eraser { opacity: 1; background-color: #303077 }
 
 	/*
 	 *	styles: LOW-ENERGY PHOSPHORIC AMBER (TVA)
@@ -2384,10 +2388,10 @@
 
 	div#panel-l, div#panel-r, div#cruiser, div#arr, div#panels, div#rainbow, div#cat, div#boxs { position: absolute; top: 0; width: 100%; height: 100% }
 	div#panel-l, div#panel-r, div#cruiser, div#rainbow { background-repeat: no-repeat }
-	div#panel-l { background-image: url(/2d/png/panel-l.png); background-position: bottom  left }
-	div#panel-r { background-image: url(/2d/png/panel-r.png); background-position: bottom right }
-	div#cruiser { background-image: url(/2d/png/cruiser.png); background-position: bottom  left }
-	div#rainbow { background-image: url(/2d/png/rainbow.png); background-position: bottom right }
+	div#panel-l { background-image: url(2d/png/panel-l.png); background-position: bottom  left }
+	div#panel-r { background-image: url(2d/png/panel-r.png); background-position: bottom right }
+	div#cruiser { background-image: url(2d/png/cruiser.png); background-position: bottom  left }
+	div#rainbow { background-image: url(2d/png/rainbow.png); background-position: bottom right }
 	div#panel-l, div#panel-r, div#cruiser, div#rainbow { background-size: 28% auto; transition: opacity .25s }
 	div#stuff-l, div#stuff-r, div#panel-r span#areal, div#panel-r span#works { position: absolute; font: 2.5vw/1 panel; color: rgba(153,176,255,.5); text-shadow: 0 0 2px #FFF }
 	div#stuff-l { bottom: 0; left:	0; padding: 0 0 2.25em 6em }

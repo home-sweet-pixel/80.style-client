@@ -814,8 +814,6 @@
 
 				World.nullSurface = {
 
-					LCD: '#FFFFFF',
-					LCS: '#FFFFFF',
 					NBL: '#000000',
 					NBT: '#000000',
 					NBR: '#000000',
@@ -833,18 +831,19 @@
 
 				scc.style.filter = {
 
-					ACN: 'brightness(1.4)' + filtr,
-					CGA: 'brightness(1.0) sepia(1) hue-rotate(426deg) saturate(2.0)' + filtr,
-					NBL: 'invert(1) saturate(0)' + filtr,
-					NBT: 'invert(1) saturate(0)' + filtr,
-					NBR: 'invert(1) saturate(0)' + filtr,
-					NDY: 'brightness(1.0) sepia(1) hue-rotate(426deg) saturate(2.0)' + filtr,
-					P_1: 'brightness(1.0) sepia(1) hue-rotate(426deg) saturate(2.0)' + filtr,
-					P_3: 'brightness(.90) sepia(1) hue-rotate(338deg) saturate(2.0) contrast(1.1)' + filtr,
-					TVA: 'brightness(.90) sepia(1) hue-rotate(340deg) saturate(3.0) contrast(1.4)' + filtr,
-					VGA: 'brightness(1.2)' + filtr
+					ACN: 'brightness(1.4)'								+ filtr,
+					CGA: 'brightness(1.0) sepia(1) hue-rotate(426deg) saturate(2.0)'		+ filtr,
+					LCS: 'brightness(1.1)'								+ filtr,
+					NBL: 'invert(1) saturate(0)'							+ filtr,
+					NBT: 'invert(1) saturate(0)'							+ filtr,
+					NBR: 'invert(1) saturate(0)'							+ filtr,
+					NDY: 'brightness(1.0) sepia(1) hue-rotate(426deg) saturate(2.0)'		+ filtr,
+					P_1: 'brightness(1.0) sepia(1) hue-rotate(426deg) saturate(2.0)'		+ filtr,
+					P_3: 'brightness(.90) sepia(1) hue-rotate(338deg) saturate(2.0) contrast(1.1)'	+ filtr,
+					TVA: 'brightness(.90) sepia(1) hue-rotate(340deg) saturate(3.0) contrast(1.4)'	+ filtr,
+					VGA: 'brightness(1.2)'								+ filtr
 
-				} [theme] || filtr
+				} [theme] || (filtr)
 
 				scc.style.mixBlendMode = {
 
@@ -2027,8 +2026,9 @@
 
 			    let F = nav.pp || nav.np ? 'full' : 'fune'
 			    let l = rc (s)
+			    let x = t.length
+			    let h = Math.round (tio.ch * x)
 			    let c = tio.findCp (tio.it.match (tio.hPatterns.pict).index + 2)
-			    let h = Math.round (tio.ch * t.length)
 			    let f = l.split (slash).pop ().split ('-').shift ()
 			    let i = f === 'g' || f === 'h' || f === 'm' || f === 'l' ? 'epic' : 'spic'
 
@@ -2042,17 +2042,25 @@
 				switch (f) {
 
 					case 'g':
-					case 'r':
 					case 'm':
 
-					    var r = p + h + 'px"' + blank + 'class="' + [ c.i, c.j, tio.nc - 4, t.length ].join (score) + '">' + '<img src="/' + l.replace (/\/[grm]/, '/d')
+						x = x - 1
+						h = h - tio.ch
+
+					case 'r':
+
+					    var r = p + h + 'px"' + blank + 'class="' + [ c.i, c.j, tio.nc - 4, x ].join (score) + '">' + '<img src="/' + l.replace (/\/[grm]/, '/d')
 						break
 
 					case 'h':
-					case 's':
 					case 'l':
 
-					    var r = p + h + 'px"' + blank + 'class="' + [ c.i, c.j, tio.nc - 4, t.length ].join (score) + '">' + '<img src="/' + l.replace (/\/l/, '/s')
+						x = x - 1
+						h = h - tio.ch
+
+					case 's':
+
+					    var r = p + h + 'px"' + blank + 'class="' + [ c.i, c.j, tio.nc - 4, x ].join (score) + '">' + '<img src="/' + l.replace (/\/l/, '/s')
 						break
 
 					default:
@@ -2543,22 +2551,19 @@
 
 								my.entag || my.ntity || my.lower || my.nolow || (c = '<tt>' + c)
 								my.entag || my.ntity || my.lower || my.nolow || (my.lower = true)
-												    my.entag || (my.lcase = my.lcase + my.count)
-												    my.entag || (my.total = my.total + my.count)
+								my.entag || my.ntity || 			(my.lcase = my.lcase + my.count)
 
 							} // found: lowercase (which we'd like to make visible)
 
-							if ((a > 64 && a < 90) || (a > 47 && a < 58)) {
+							if (a > 64 && a <= 90) {
 
 								my.ntity || (my.lower && (c = '</tt>' + c))
 								my.ntity || (my.lower && (my.lower = false))
-								my.ntity || (my.entag || (my.total = my.total + my.count))
 
-							} // found: uppercase or digit (which breaks lowercase)
+							} // found: uppercase (which breaks a lowercase "span")
 
-							if (my.count)
-
-								my.nolow = 3 * my.lcase >= my.total	// trigger smart lowercase prevention (above 33% detection threshold)
+							my.entag || (my.ntity || (my.total += my.count))	// count all characters that were not in an HTML tag or entity (&#...;)
+							my.count && (my.nolow = 5 * my.lcase > my.total)	// trigger "smart" lowercase prevention (above 25% detection threshold)
 
 					}
 
@@ -4992,7 +4997,7 @@
 
 								}.bind (this)
 
-							     /* new Requester ({ query: '80.style' }).post ({
+							     /* new Requester ({ query: 'localhost' }).post ({
 
 									uri: '/exec/signIn',
 
